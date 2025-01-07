@@ -110,6 +110,10 @@ button {
   color: #000; /* Adjust color as needed */
 }
 
+button:hover {
+  font-size: 40px;
+}
+
 
 .search-results {
   display: grid;
@@ -117,7 +121,8 @@ button {
   gap: 15px;
   width: 100%;
   max-width: 900px;
-  margin-top: 5%;
+  margin-top: 2.5%;
+  margin-bottom: 2.5%;
 }
 
 .movie-item {
