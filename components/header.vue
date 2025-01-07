@@ -22,10 +22,6 @@
 // Simulate authentication state
 const isLoggedIn = ref(true);
 
-const goToProfile = () => {
-  // Redirect to profile page
-  console.log("Redirecting to Profile...");
-};
 </script>
 
 <style scoped>

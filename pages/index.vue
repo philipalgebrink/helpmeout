@@ -1,9 +1,11 @@
 <template>
   <Header />
+  <Search />
 </template>
 
 <script lang="ts" setup>
 import Header from '~/components/header.vue';
+import Search from '~/components/search.vue';
 </script>
 
 <style>
