@@ -9,6 +9,12 @@
     <p><strong>Genre:</strong> {{ movie?.Genre }}</p>
     <p><strong>Director:</strong> {{ movie?.Director }}</p>
     <p><strong>Plot:</strong> {{ movie?.Plot }}</p>
+
+    <!-- Button dynamically changes based on whether the movie is saved -->
+    <button @click="saveMovie" :disabled="isSaving || isMovieSaved">
+      {{ isMovieSaved ? "Already Saved" : isSaving ? "Saving..." : "Save Movie" }}
+    </button>
+
     <NuxtLink to="/">Go back home</NuxtLink>
   </div>
   <div v-else class="loading">
@@ -17,12 +23,16 @@
 </template>
 
 <script lang="ts" setup>
+import { myMovies, addMovieToMyList } from "~/store/mylist";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
-import { ref, onMounted } from "vue";
 
+// Movie details logic
 const route = useRoute();
-const imdbID = route.params.imdbID as string; // Get the dynamic param
+const imdbID = route.params.imdbID as string;
+
 const movie = ref<null | {
+  imdbID: string;
   Title: string;
   Year: string;
   Genre: string;
@@ -30,6 +40,11 @@ const movie = ref<null | {
   Plot: string;
   Poster: string;
 }>(null);
+
+const isSaving = ref(false); // Tracks if a movie is being saved
+const isMovieSaved = computed(() =>
+  myMovies.movies.some((m) => m.imdbID === imdbID)
+); // Checks if the movie is already saved
 
 const fetchMovieDetails = async () => {
   try {
@@ -44,6 +59,32 @@ const fetchMovieDetails = async () => {
     }
   } catch (error) {
     console.error("Error fetching movie:", error);
+  }
+};
+
+const saveMovie = async () => {
+  if (isMovieSaved.value) return; // Prevent saving if already saved
+
+  isSaving.value = true;
+
+  try {
+    const savedMovie = {
+      imdbID: movie.value?.imdbID || "",
+      Title: movie.value?.Title || "",
+      Year: movie.value?.Year || "",
+      Genre: movie.value?.Genre || "",
+      Director: movie.value?.Director || "",
+      Plot: movie.value?.Plot || "",
+      Poster: movie.value?.Poster || "",
+    };
+
+    addMovieToMyList(savedMovie); // Save movie to the list
+    console.log("Movie saved to list:", savedMovie);
+    console.log("Current My Movies List:", myMovies.movies);
+  } catch (error) {
+    console.error("Error saving movie:", error);
+  } finally {
+    isSaving.value = false; // Reset saving state
   }
 };
 
@@ -86,5 +127,24 @@ a:hover {
   text-align: center;
   font-size: 18px;
   margin-top: 50px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background-color: #34495e;
 }
 </style>
