@@ -37,3 +37,35 @@ export const addMovieToMyList = (movie: {
 export const removeMovieFromMyList = (imdbID: string) => {
   myMovies.movies = myMovies.movies.filter((movie) => movie.imdbID !== imdbID);
 };
+
+export const initializeMyMovies = async () => {
+  try {
+    const response = await $fetch<{
+      statusCode: number;
+      body: {
+        message?: string;
+        result?: {
+          imdbID: string;
+          Title: string;
+          Year: string;
+          Genre: string;
+          Director: string;
+          Plot: string;
+          Poster: string;
+        }[];
+        error?: string;
+      };
+    }>("/api/movies");
+
+    // Ensure the result exists and is an array
+    const fetchedMovies = response.body.result || [];
+
+    // Populate the reactive state
+    myMovies.movies = fetchedMovies;
+
+    console.log("Movies initialized from database:", fetchedMovies);
+  } catch (error) {
+    console.error("Failed to initialize movies:", error);
+  }
+};
+

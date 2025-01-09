@@ -9,7 +9,7 @@
     <!-- Display saved movies -->
     <MyMovies />
 
-    <NuxtLink to="/">Go back home</NuxtLink>
+    <NuxtLink class="goBack" to="/">Go back home</NuxtLink>
   </div>
 </template>
 
@@ -31,6 +31,14 @@ const logout = () => {
 </script>
 
 <style scoped>
+
+.goBack {
+  text-decoration: none;
+  color: black;
+  position: absolute;
+  bottom: 25px;
+}
+
 .profile-page {
   display: flex;
   flex-direction: column;

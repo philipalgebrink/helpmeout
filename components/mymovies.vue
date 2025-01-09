@@ -19,18 +19,52 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, onMounted } from "vue";
 import { myMovies, removeMovieFromMyList } from "@/store/mylist";
 
-// Access the movies list
-const movies = myMovies.movies;
+// Define a type for a movie
+type Movie = {
+  imdbID: string;
+  Title: string;
+  Year: string;
+  Genre: string;
+  Director: string;
+  Plot: string;
+  Poster: string;
+};
+
+// Local state to hold movies
+const movies = ref<Movie[]>([]); // Use Movie[] type to specify the structure of movies
+
+// Fetch movies from the database
+const fetchMoviesFromDB = async () => {
+  try {
+    const fetchedMovies = await $fetch<Movie[]>("/api/movies"); // Ensure API returns an array of Movie
+    movies.value = fetchedMovies; // Populate local state with fetched movies
+    console.log("Fetched movies:", fetchedMovies);
+  } catch (error) {
+    console.error("Failed to fetch movies:", error);
+  }
+};
 
 // Remove a movie from the list
 const removeMovie = (imdbID: string) => {
-  removeMovieFromMyList(imdbID);
+  removeMovieFromMyList(imdbID); // Update reactive store
+  movies.value = movies.value.filter((movie) => movie.imdbID !== imdbID); // Update local state
 };
+
+// Fetch movies when the component is mounted
+onMounted(() => {
+  fetchMoviesFromDB();
+});
 </script>
 
+
 <style scoped>
+
+h2 {
+  letter-spacing: 2px;
+}
 .my-movies {
   padding: 20px;
   text-align: center;
@@ -41,6 +75,8 @@ const removeMovie = (imdbID: string) => {
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 15px;
   margin-top: 20px;
+  width: 100%;
+  max-width: 900px;
 }
 
 .movie-item {

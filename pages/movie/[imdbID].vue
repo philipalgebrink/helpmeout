@@ -63,14 +63,17 @@ const fetchMovieDetails = async () => {
 };
 
 const saveMovie = async () => {
-  if (isMovieSaved.value) return; // Prevent saving if already saved
-
+  if (isMovieSaved.value) {
+    console.log("Movie is already saved. Aborting save.");
+    return; // Prevent saving if already saved
+  }
+  console.log("Saving...");
   isSaving.value = true;
 
   try {
     const savedMovie = {
       imdbID: movie.value?.imdbID || "",
-      Title: movie.value?.Title || "",
+      Title: movie.value?.Title || "", // Ensure property names match
       Year: movie.value?.Year || "",
       Genre: movie.value?.Genre || "",
       Director: movie.value?.Director || "",
@@ -78,15 +81,29 @@ const saveMovie = async () => {
       Poster: movie.value?.Poster || "",
     };
 
-    addMovieToMyList(savedMovie); // Save movie to the list
+    console.log("Sending movie to /api/movies:", savedMovie);
+
+    // Use $fetch to make a POST request
+    const result = await $fetch("/api/movies", {
+      method: "POST",
+      body: savedMovie,
+    });
+
+    console.log("Server response:", result);
+
+    // Add the movie to the local list
+    addMovieToMyList(savedMovie);
     console.log("Movie saved to list:", savedMovie);
-    console.log("Current My Movies List:", myMovies.movies);
   } catch (error) {
     console.error("Error saving movie:", error);
+    // Optional: Display an error message to the user
+    alert("Failed to save the movie. Please try again.");
   } finally {
     isSaving.value = false; // Reset saving state
   }
 };
+
+
 
 onMounted(() => {
   fetchMovieDetails();
