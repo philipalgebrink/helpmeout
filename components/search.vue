@@ -1,19 +1,52 @@
 <template>
-  <div class="search">
+  <div :class="searchClass">
     <div class="search-container">
-  <input
-    type="text"
-    v-model="query"
-    placeholder="Search for a movie..."
-    @input="handleInput"
-  />
-  <button @click="searchMovies">🔎</button>
-</div>
+      <!-- Input Field -->
+      <input
+        type="text"
+        v-model="query"
+        placeholder="Search for a movie..."
+        @keyup.enter="fetchAllResults"
+        aria-label="Search for a movie"
+      />
+      <!-- Search Button -->
+      <button class="searchButton" @click="fetchAllResults" aria-label="Search">🔎</button>
+    </div>
 
+    <!-- Filter Options -->
+    <div class="filter-container">
+      <label for="rating">IMDb Rating:</label>
+      <select id="rating" v-model="selectedRating">
+        <option value="">All</option>
+        <option value="1">1+</option>
+        <option value="2">2+</option>
+        <option value="3">3+</option>
+        <option value="4">4+</option>
+        <option value="5">5+</option>
+        <option value="6">6+</option>
+        <option value="7">7+</option>
+        <option value="8">8+</option>
+        <option value="9">9+</option>
+        <option value="10">10</option>
+      </select>
 
-    <div v-if="searchResults.length" class="search-results">
+      <label for="genre">Genre:</label>
+      <select id="genre" v-model="selectedGenre">
+        <option value="">All</option>
+        <option value="Action">Action</option>
+        <option value="Comedy">Comedy</option>
+        <option value="Drama">Drama</option>
+        <option value="Horror">Horror</option>
+      </select>
+    </div>
+
+    <!-- Loading Indicator -->
+    <p v-if="isLoading" class="loading">Loading...</p>
+
+    <!-- Search Results -->
+    <div v-if="displayedResults.length" class="search-results">
       <div
-        v-for="movie in searchResults"
+        v-for="movie in displayedResults"
         :key="movie.imdbID"
         class="movie-item"
       >
@@ -25,52 +58,153 @@
           <div class="movie-details">
             <h3>{{ movie.Title }}</h3>
             <p>Year: {{ movie.Year }}</p>
+            <p>IMDb Rating: {{ movie.imdbRating }}</p>
+            <p>Genre: {{ movie.Genre }}</p>
           </div>
         </NuxtLink>
       </div>
     </div>
+
+    <!-- Pagination -->
+    <div v-if="totalPages > 1" class="pagination">
+      <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">
+        Previous
+      </button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button
+        @click="changePage(currentPage + 1)"
+        :disabled="currentPage === totalPages"
+      >
+        Next
+      </button>
+    </div>
+
+    <!-- No Results Found -->
+    <p
+      v-else-if="!isLoading && !errorMessage && query.trim().length > 0 && searchResults.length === 0"
+    >
+      No movies found. Try another search.
+    </p>
   </div>
 </template>
 
 <script lang="ts" setup>
+
 type Movie = {
-  Title: string,
-  Year: string,
-  imdbID: string,
-  Poster: string,
+  Title: string;
+  Year: string;
+  imdbID: string;
+  Poster: string;
+  Rated: string;
+  Genre: string;
+  imdbRating?: string;
 };
 
+// Reactive states
 const query = ref(""); // Holds the search query
-const searchResults: Ref<Movie[]> = ref([]); // Holds the search results
+const debouncedQuery = useDebounce(query, 300); // Debounced search query
+const searchResults = ref<Movie[]>([]); // Holds the full search results
+const displayedResults = ref<Movie[]>([]); // Holds the displayed search results for the current page
+const errorMessage = ref(""); // Holds any error message
+const isLoading = ref(false); // Indicates if the search is in progress
+const currentPage = ref(1); // Current page
+const resultsPerPage = 20; // Results per page
+const totalPages = ref(1); // Total number of pages
 
-const searchMovies = async () => {
-  if (!query.value.trim()) {
-    alert("Please enter a search term");
-    return;
-  }
+// Filter states
+const selectedRating = ref(""); // Holds the selected rating filter
+const selectedGenre = ref(""); // Holds the selected genre filter
 
+const fetchAllResults = async () => {
+  isLoading.value = true;
+  errorMessage.value = "";
   try {
-    const response = await fetch(
-      `http://www.omdbapi.com/?apikey=9e1754f6&s=${query.value}`
-    );
+    const response = await fetch(`https://www.omdbapi.com/?s=${query.value}&page=${currentPage.value}&apikey=9e1754f6`);
     const data = await response.json();
 
     if (data.Response === "True") {
-      searchResults.value = data.Search;
+      const detailedMovies = await Promise.all(
+        data.Search.map(async (movie: any) => {
+          try {
+            // Fetch detailed info for each movie
+            const movieDetailsResponse = await fetch(`https://www.omdbapi.com/?i=${movie.imdbID}&apikey=9e1754f6`);
+            const movieDetails = await movieDetailsResponse.json();
+
+            if (movieDetails.Response === "True") {
+              console.log(`Fetched IMDb Rating for ${movie.Title}:`, movieDetails.imdbRating); // Log IMDb rating
+              return { ...movie, imdbRating: movieDetails.imdbRating, Genre: movieDetails.Genre,}; // Add IMDb rating to the movie object
+            } else {
+              console.warn(`Failed to fetch details for ${movie.Title}:`, movieDetails.Error);
+              return { ...movie, imdbRating: "N/A", Genre: "N/A" }; // Fallback if details fail
+            }
+          } catch (error) {
+            console.error(`Error fetching details for ${movie.Title}:`, error);
+            return { ...movie, imdbRating: "N/A", Genre: "N/A" }; // Fallback on error
+          }
+        })
+      );
+
+      searchResults.value = detailedMovies; // Update search results with detailed movies
+      totalPages.value = Math.ceil(data.totalResults / resultsPerPage);
+      applyFilters(); // Apply filters to the detailed movies
     } else {
-      alert(data.Error); // Show error from API
-      searchResults.value = [];
+      errorMessage.value = data.Error;
     }
   } catch (error) {
-    console.error("Error fetching movies:", error);
+    errorMessage.value = "An error occurred while fetching data.";
+    console.error("Error fetching results:", error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
-const handleInput = () => {
-  if (query.value.length === 0) {
-    searchResults.value = []; // Clear results if query is cleared
+
+const applyFilters = () => {
+  let filteredResults = searchResults.value;
+
+  // Apply IMDb Rating filter
+  if (selectedRating.value) {
+    const rating = parseInt(selectedRating.value, 10);
+    filteredResults = filteredResults.filter(
+      (movie) => parseFloat(movie.imdbRating || "0") >= rating
+    );
+  }
+
+  // Apply Genre filter
+  if (selectedGenre.value) {
+    filteredResults = filteredResults.filter((movie) =>
+      movie.Genre.includes(selectedGenre.value)
+    );
+  }
+
+  // Paginate results
+  displayedResults.value = filteredResults.slice(
+    (currentPage.value - 1) * resultsPerPage,
+    currentPage.value * resultsPerPage
+  );
+};
+
+
+// Watch for changes in filters and apply them
+watch([selectedRating, selectedGenre], applyFilters);
+
+// Watch for changes in debounced query and fetch results
+watch(debouncedQuery, fetchAllResults);
+
+// Change page
+const changePage = (page: number) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+    applyFilters();
   }
 };
+
+const searchClass = computed(() => {
+  return {
+    search: true,
+    'results-displayed': displayedResults.value.length || isLoading.value,
+  };
+});
 </script>
 
 <style scoped>
@@ -78,84 +212,129 @@ const handleInput = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 10%;
+  padding-top: 15%;
+  transition: padding-top 0.5s ease;
+}
+
+.search.results-displayed {
+  padding-top: 50px;
 }
 
 .search-container {
-  position: relative; /* Enable relative positioning for the container */
-  width: 620px; /* Adjust width as needed */
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.filter-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
 }
 
 input[type="text"] {
-  padding: 10px;
-  width: 100%; /* Full width for the input */
-  height: 100px;
+  padding: 20px;
+  width: 100%;
   margin-bottom: 10px;
-  border: 1px solid #000000;
+  border: 1px solid #000;
   border-radius: 20px;
   text-align: center;
-  font-size: 36px;
-  box-sizing: border-box; /* Ensure padding is included in the width */
+  font-size: 18px;
+  box-sizing: border-box;
 }
 
-button {
-  position: absolute; /* Position the button inside the container */
-  top: 45%; /* Center vertically */
-  right: 15px; /* Adjust distance from the right */
-  transform: translateY(-50%); /* Adjust for vertical alignment */
-  font-size: 36px;
-  border: none;
-  background: none; /* Remove background for transparency */
+.searchButton {
+  position: absolute;
+  font-size: 32px;
   cursor: pointer;
-  color: #000; /* Adjust color as needed */
+  right: 21px;
+  background: none;
+  border: none;
+  margin-top: 14px;
 }
 
-button:hover {
-  font-size: 40px;
+.searchButton:hover {
+  font-size: 34px;
 }
 
+.error {
+  color: red;
+  margin-top: 10px;
+}
+
+.loading {
+  margin-top: 10px;
+}
 
 .search-results {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
-  width: 100%;
-  max-width: 900px;
-  margin-top: 2.5%;
-  margin-bottom: 2.5%;
+  grid-template-columns: repeat(5, minmax(350px, 1fr));
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 50px;
 }
 
 .movie-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  background-color: #fff;
-  transition: transform 0.3s, box-shadow 0.3s;
+  width: 300px;
+  text-align: left;
+  margin-bottom: 10px;
 }
 
 .movie-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  scale: 1.10;
 }
 
-.movie-item img {
-  width: 150px;
-  height: 225px;
-  object-fit: cover;
-  border-radius: 4px;
+.movie-item a {
+  text-decoration: none;
+  color: #000;
+}
+
+.movie-details {
+  
 }
 
 .movie-details h3 {
-  font-size: 16px;
-  margin: 10px 0 5px;
+  font-size: 20px;
+  letter-spacing: 1px;
 }
 
 .movie-details p {
-  font-size: 14px;
-  color: #555;
+  font-size: 16px;
+}
+.movie-details {
+  text-align: left;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  background-color: #007BFF;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+.pagination button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 16px;
+  margin: 0 10px;
+  color: #333;
 }
 </style>

@@ -1,10 +1,8 @@
 import mongodb from "mongodb";
 
 export default defineEventHandler(async (event) => {
-  // const bodyParser = require("body-parser");
-  // const { MongoClient } = require("mongodb");
 
-  const uri = "mongodb://127.0.0.1:27017"; // Update this if using a remote database
+  const uri = "mongodb+srv://philipalgebrinkpa:Nwskrso2crMnX5TJ@helpmeoutdb.esu6l.mongodb.net/";
   const client = new mongodb.MongoClient(uri);
 
 
