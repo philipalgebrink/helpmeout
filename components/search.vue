@@ -212,7 +212,7 @@ const searchClass = computed(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 15%;
+  padding-top: 33vh;
   transition: padding-top 0.5s ease;
 }
 
@@ -242,8 +242,9 @@ input[type="text"] {
   border: 1px solid #000;
   border-radius: 20px;
   text-align: center;
-  font-size: 18px;
+  font-size: 24px;
   box-sizing: border-box;
+  letter-spacing: 2px;
 }
 
 .searchButton {

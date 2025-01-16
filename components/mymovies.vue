@@ -1,25 +1,24 @@
 <template>
   <div class="my-movies">
     <h2>My Movies</h2>
-    <div v-if="movies.length" class="movie-grid">
-      <div v-for="movie in movies" :key="movie.imdbID" class="movie-item">
-        <img
-          :src="movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150x225?text=No+Poster'"
-          alt="Poster"
-        />
-        <div class="movie-details">
-          <h3>{{ movie.Title }}</h3>
-          <p>{{ movie.Year }}</p>
-          <button @click="removeMovie(movie.imdbID)">Remove</button>
-        </div>
+    <div v-if="myMovies.movies.length" class="movie-grid">
+    <div v-for="movie in myMovies.movies" :key="movie.imdbID" class="movie-item">
+      <img
+        :src="movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150x225?text=No+Poster'"
+        alt="Poster"
+      />
+      <div class="movie-details">
+        <h3>{{ movie.Title }}</h3>
+        <p>{{ movie.Year }}</p>
+        <button @click="removeMovie(movie.imdbID)">Remove</button>
       </div>
     </div>
-    <p v-else>No movies saved yet.</p>
+  </div>
+  <p v-else>No movies saved yet or unable to fetch data.</p>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
 import { myMovies, removeMovieFromMyList } from "@/store/mylist";
 
 // Define a type for a movie
@@ -36,27 +35,11 @@ type Movie = {
 // Local state to hold movies
 const movies = ref<Movie[]>([]); // Use Movie[] type to specify the structure of movies
 
-// Fetch movies from the database
-const fetchMoviesFromDB = async () => {
-  try {
-    const fetchedMovies = await $fetch<Movie[]>("/api/movies"); // Ensure API returns an array of Movie
-    movies.value = fetchedMovies; // Populate local state with fetched movies
-    console.log("Fetched movies:", fetchedMovies);
-  } catch (error) {
-    console.error("Failed to fetch movies:", error);
-  }
-};
-
 // Remove a movie from the list
 const removeMovie = (imdbID: string) => {
   removeMovieFromMyList(imdbID); // Update reactive store
   movies.value = movies.value.filter((movie) => movie.imdbID !== imdbID); // Update local state
 };
-
-// Fetch movies when the component is mounted
-onMounted(() => {
-  fetchMoviesFromDB();
-});
 </script>
 
 
