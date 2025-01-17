@@ -1,25 +1,27 @@
 <template>
   <div class="my-movies">
     <h2>My Movies</h2>
-    <div v-if="myMovies.movies.length" class="movie-grid">
-    <div v-for="movie in myMovies.movies" :key="movie.imdbID" class="movie-item">
-      <img
-        :src="movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150x225?text=No+Poster'"
-        alt="Poster"
-      />
-      <div class="movie-details">
-        <h3>{{ movie.Title }}</h3>
-        <p>{{ movie.Year }}</p>
-        <button @click="removeMovie(movie.imdbID)">Remove</button>
+    <div v-if="movies.length" class="movie-grid">
+      <div v-for="movie in movies" :key="movie.imdbID" class="movie-item">
+        <img
+          :src="movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150x225?text=No+Poster'"
+          alt="Poster"
+        />
+        <div class="movie-details">
+          <h3>{{ movie.Title }}</h3>
+          <p>{{ movie.Year }}</p>
+          <button @click="removeMovie(movie.imdbID)">Remove</button>
+        </div>
       </div>
     </div>
-  </div>
-  <p v-else>No movies saved yet or unable to fetch data.</p>
+    <p v-else>No movies saved yet or unable to fetch data.</p>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { myMovies, removeMovieFromMyList } from "@/store/mylist";
+import { ref, onMounted } from 'vue';
+import { useCookies } from '@vueuse/integrations/useCookies';
+import { useRouter } from 'vue-router';
 
 // Define a type for a movie
 type Movie = {
@@ -34,17 +36,46 @@ type Movie = {
 
 // Local state to hold movies
 const movies = ref<Movie[]>([]); // Use Movie[] type to specify the structure of movies
+const cookies = useCookies(['auth']);
+const router = useRouter();
+
+// Fetch movies from the API
+const fetchMovies = async () => {
+  try {
+    const token = cookies.get('auth');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    const response = await fetch('/api/movies', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      movies.value = data.result;
+    } else {
+      console.error('Failed to fetch movies:', await response.json());
+    }
+  } catch (error) {
+    console.error('Error fetching movies:', error);
+  }
+};
 
 // Remove a movie from the list
 const removeMovie = (imdbID: string) => {
-  removeMovieFromMyList(imdbID); // Update reactive store
+  // Implement the logic to remove the movie from the backend if needed
   movies.value = movies.value.filter((movie) => movie.imdbID !== imdbID); // Update local state
 };
+
+// Fetch movies when the component is mounted
+onMounted(fetchMovies);
 </script>
 
-
 <style scoped>
-
 h2 {
   letter-spacing: 2px;
 }
@@ -52,58 +83,17 @@ h2 {
   padding: 20px;
   text-align: center;
 }
-
 .movie-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
-  margin-top: 20px;
-  width: 100%;
-  max-width: 900px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
 }
-
 .movie-item {
-  text-align: center;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  background-color: #fff;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.movie-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.movie-item img {
   width: 150px;
-  height: 225px;
-  object-fit: cover;
-  border-radius: 4px;
+  text-align: center;
 }
-
-.movie-details h3 {
-  font-size: 16px;
-  margin: 10px 0;
-}
-
-.movie-details p {
-  font-size: 14px;
-  color: #555;
-}
-
-button {
-  padding: 8px 16px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-button:hover {
-  background-color: #c0392b;
+.movie-details {
+  margin-top: 10px;
 }
 </style>
