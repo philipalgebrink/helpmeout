@@ -1,3 +1,5 @@
+import { useCookies } from '@vueuse/integrations/useCookies';
+
 // Define the Movie type
 type Movie = {
   imdbID: string;
@@ -26,8 +28,17 @@ export const addMovieToMyList = async (movie: Movie) => {
 
     try {
       // Save the movie to the database
+      const token = useCookies(['auth']).get('auth');
+      if (!token) {
+        useRouter().push('/login');
+        return;
+      }
+
       await $fetch("/api/movies", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: movie,
       });
       console.log("Movie successfully saved to the database:", movie);
@@ -48,8 +59,17 @@ export const removeMovieFromMyList = async (imdbID: string) => {
   myMovies.movies = myMovies.movies.filter((movie) => movie.imdbID !== imdbID);
 
   try {
+    const token = useCookies(['auth']).get('auth');
+    if (!token) {
+      useRouter().push('/login');
+      return;
+    }
+
     await $fetch(`/api/movies/${imdbID}`, {
-      method: "DELETE" as "DELETE", // Explicitly cast the method to "DELETE"
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     console.log(`Movie with ID ${imdbID} successfully removed from the database.`);
   } catch (err) {
@@ -57,14 +77,23 @@ export const removeMovieFromMyList = async (imdbID: string) => {
   }
 };
 
-
 // Initialize movies from the database (called only once during app startup)
 export const initializeMyMovies = async () => {
   try {
+    const token = useCookies(['auth']).get('auth');
+    if (!token) {
+      useRouter().push('/login');
+      return;
+    }
+
     const response = await $fetch<{
       statusCode: number;
       result: Movie[];
-    }>("/api/movies");
+    }>("/api/movies", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (response.statusCode === 200 && response.result) {
       // Populate the `myMovies` reactive state with the fetched movies
@@ -78,19 +107,28 @@ export const initializeMyMovies = async () => {
   }
 };
 
-
 // Fetch movies from the database
 export const fetchMoviesFromDB = async () => {
   try {
-      const response = await $fetch<{ statusCode: number; result?: Movie[] }>("/api/movies");
+    const token = useCookies(['auth']).get('auth');
+    if (!token) {
+      useRouter().push('/login');
+      return;
+    }
 
-      if (response.statusCode === 200 && response.result) {
-          myMovies.movies = response.result; // Update reactive state
-          console.log("Fetched movies:", myMovies.movies);
-      } else {
-          console.error("Unexpected response structure or no movies found:", response);
-      }
+    const response = await $fetch<{ statusCode: number; result?: Movie[] }>("/api/movies", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.statusCode === 200 && response.result) {
+      myMovies.movies = response.result; // Update reactive state
+      console.log("Fetched movies:", myMovies.movies);
+    } else {
+      console.error("Unexpected response structure or no movies found:", response);
+    }
   } catch (error) {
-      console.error("Failed to fetch movies:", error);
+    console.error("Failed to fetch movies:", error);
   }
 };

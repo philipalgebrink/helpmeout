@@ -66,9 +66,30 @@ const fetchMovies = async () => {
 };
 
 // Remove a movie from the list
-const removeMovie = (imdbID: string) => {
-  // Implement the logic to remove the movie from the backend if needed
-  movies.value = movies.value.filter((movie) => movie.imdbID !== imdbID); // Update local state
+const removeMovie = async (imdbID: string) => {
+  try {
+    const token = cookies.get('auth');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    const response = await fetch(`/api/movies/${imdbID}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      // Update local state
+      movies.value = movies.value.filter((movie) => movie.imdbID !== imdbID);
+    } else {
+      console.error('Failed to delete movie:', await response.json());
+    }
+  } catch (error) {
+    console.error('Error deleting movie:', error);
+  }
 };
 
 // Fetch movies when the component is mounted
