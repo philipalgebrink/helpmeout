@@ -7,7 +7,6 @@
 </template>
 
 <script lang="ts" setup>
-import MyMovies from '@/components/mymovies.vue';
 import { useCookies } from '@vueuse/integrations/useCookies';
 
 interface User {

@@ -30,7 +30,6 @@ export const addMovieToMyList = async (movie: Movie) => {
       // Save the movie to the database
       const token = useCookies(['auth']).get('auth');
       if (!token) {
-        useRouter().push('/login');
         return;
       }
 
@@ -82,7 +81,6 @@ export const initializeMyMovies = async () => {
   try {
     const token = useCookies(['auth']).get('auth');
     if (!token) {
-      useRouter().push('/login');
       return;
     }
 
@@ -112,7 +110,6 @@ export const fetchMoviesFromDB = async () => {
   try {
     const token = useCookies(['auth']).get('auth');
     if (!token) {
-      useRouter().push('/login');
       return;
     }
 

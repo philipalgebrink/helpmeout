@@ -9,9 +9,7 @@
 
       <!-- Authentication Button -->
       <div class="auth-button">
-        <NuxtLink v-if="isLoggedIn" to="/profile">Profile</NuxtLink>
-
-        <NuxtLink v-else to="/login">Login</NuxtLink>
+        <NuxtLink to="/profile">🙍‍♂️</NuxtLink>
       </div>
     </div>
   </header>
@@ -65,15 +63,15 @@ h1 {
 /* Auth button styling */
 .auth-button a {
   background-color: white;
-  color: rgb(255, 94, 0);
   border: none;
   border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 10px 10px;
+  font-size: 24px;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   text-decoration: none;
+  letter-spacing: 1px;
 }
 
 .auth-button a:hover {
