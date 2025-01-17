@@ -24,8 +24,9 @@
 
 <script lang="ts" setup>
 import { myMovies, addMovieToMyList } from "~/store/mylist";
-import { ref, onMounted, computed } from "vue";
-import { useRoute } from "vue-router";
+import { useCookies } from '@vueuse/integrations/useCookies';
+const cookies = useCookies(['auth']);
+const router = useRouter();
 
 // Movie details logic
 const route = useRoute();
@@ -67,6 +68,16 @@ const saveMovie = async () => {
     console.log("Movie is already saved. Aborting save.");
     return; // Prevent saving if already saved
   }
+
+  // Check if the user is logged in
+  const token = cookies.get('auth');
+  if (!token) {
+    console.log("User is not logged in. Aborting save.");
+    alert("You need to be logged in to save movies.");
+    router.push('/login');
+    return;
+  }
+
   console.log("Saving...");
   isSaving.value = true;
 
@@ -86,6 +97,9 @@ const saveMovie = async () => {
     // Use $fetch to make a POST request
     const result = await $fetch("/api/movies", {
       method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       body: savedMovie,
     });
 
@@ -102,8 +116,6 @@ const saveMovie = async () => {
     isSaving.value = false; // Reset saving state
   }
 };
-
-
 
 onMounted(() => {
   fetchMovieDetails();
