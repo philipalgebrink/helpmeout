@@ -3,13 +3,6 @@
     <h1>Welcome to Your Profile</h1>
     <p>You are logged in as <strong>{{ user?.email }}</strong>.</p>
     <button @click="logout">Log Out</button>
-
-    <hr />
-
-    <!-- Display saved movies -->
-    <MyMovies />
-
-    <NuxtLink class="goBack" to="/">Go back home</NuxtLink>
   </div>
 </template>
 
@@ -48,15 +41,5 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   margin-top: 50px;
-}
-
-.goBack {
-  margin-top: 20px;
-  color: #3498db;
-  text-decoration: none;
-}
-
-.goBack:hover {
-  text-decoration: underline;
 }
 </style>
