@@ -16,12 +16,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useCookies } from '@vueuse/integrations/useCookies';
 
 const email = ref('');
 const password = ref('');
 const router = useRouter();
-const cookies = useCookies(['auth']);
+const authCookie = useCookie('auth', { maxAge: 3600 * 1000 });
 
 const handleLogin = async () => {
   try {
@@ -32,7 +31,7 @@ const handleLogin = async () => {
 
     if (response.statusCode === 200) {
       if ('token' in response) {
-        cookies.set('auth', response.token, { expires: new Date(Date.now() + 3600 * 1000) });
+        authCookie.value = response.token;
       }
       if ('user' in response) {
         localStorage.setItem('user', JSON.stringify(response.user));

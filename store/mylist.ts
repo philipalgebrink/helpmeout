@@ -1,4 +1,3 @@
-import { useCookies } from '@vueuse/integrations/useCookies';
 
 // Define the Movie type
 type Movie = {
@@ -27,8 +26,10 @@ export const addMovieToMyList = async (movie: Movie) => {
     myMovies.movies.push(movie);
 
     try {
+
       // Save the movie to the database
-      const token = useCookies(['auth']).get('auth');
+      const authCookie = useCookie('auth');
+      const token = authCookie.value;
       if (!token) {
         return;
       }
@@ -58,7 +59,8 @@ export const removeMovieFromMyList = async (imdbID: string) => {
   myMovies.movies = myMovies.movies.filter((movie) => movie.imdbID !== imdbID);
 
   try {
-    const token = useCookies(['auth']).get('auth');
+    const authCookie = useCookie('auth');
+    const token = authCookie.value;
     if (!token) {
       useRouter().push('/login');
       return;
@@ -79,7 +81,8 @@ export const removeMovieFromMyList = async (imdbID: string) => {
 // Initialize movies from the database (called only once during app startup)
 export const initializeMyMovies = async () => {
   try {
-    const token = useCookies(['auth']).get('auth');
+    const authCookie = useCookie('auth');
+    const token = authCookie.value;
     if (!token) {
       return;
     }
@@ -108,7 +111,8 @@ export const initializeMyMovies = async () => {
 // Fetch movies from the database
 export const fetchMoviesFromDB = async () => {
   try {
-    const token = useCookies(['auth']).get('auth');
+    const authCookie = useCookie('auth');
+    const token = authCookie.value;
     if (!token) {
       return;
     }

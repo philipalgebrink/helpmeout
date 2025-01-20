@@ -7,4 +7,6 @@ export default defineNuxtConfig({
     '~/assets/normalize.css',
     '~/assets/reset.local.css',
   ],
+
+  modules: ['@nuxtjs/color-mode'],
 })

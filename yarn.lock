@@ -764,6 +764,33 @@
     unimport "^3.14.5"
     untyped "^1.5.2"
 
+"@nuxt/kit@^3.13.2":
+  version "3.15.2"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.15.2.tgz#edb0b66f08989458329cafac4cbe2960c2d92ebf"
+  integrity sha512-nxiPJVz2fICcyBKlN5pL1IgZVejyArulREsS5HvAk07hijlYuZ5toRM8soLt51VQNpFd/PedL+Z1AlYu/bQCYQ==
+  dependencies:
+    "@nuxt/schema" "3.15.2"
+    c12 "^2.0.1"
+    consola "^3.4.0"
+    defu "^6.1.4"
+    destr "^2.0.3"
+    globby "^14.0.2"
+    ignore "^7.0.3"
+    jiti "^2.4.2"
+    klona "^2.0.6"
+    knitwork "^1.2.0"
+    mlly "^1.7.4"
+    ohash "^1.1.4"
+    pathe "^2.0.1"
+    pkg-types "^1.3.1"
+    scule "^1.3.0"
+    semver "^7.6.3"
+    std-env "^3.8.0"
+    ufo "^1.5.4"
+    unctx "^2.4.1"
+    unimport "^3.14.6"
+    untyped "^1.5.2"
+
 "@nuxt/schema@3.15.1", "@nuxt/schema@^3.15.0":
   version "3.15.1"
   resolved "https://registry.npmjs.org/@nuxt/schema/-/schema-3.15.1.tgz"
@@ -772,6 +799,16 @@
     consola "^3.3.3"
     defu "^6.1.4"
     pathe "^2.0.0"
+    std-env "^3.8.0"
+
+"@nuxt/schema@3.15.2":
+  version "3.15.2"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema/-/schema-3.15.2.tgz#175df2b6893d93b4998f0bccfb0b0b6f151f620b"
+  integrity sha512-cTHGbLTbrQ83B+7Mh0ggc5MzIp74o8KciA0boCiBJyK5uImH9QQNK6VgfwRWcTD5sj3WNKiIB1luOMom3LHgVw==
+  dependencies:
+    consola "^3.4.0"
+    defu "^6.1.4"
+    pathe "^2.0.1"
     std-env "^3.8.0"
 
 "@nuxt/telemetry@^2.6.2":
@@ -829,6 +866,16 @@
     vite-node "^2.1.8"
     vite-plugin-checker "^0.8.0"
     vue-bundle-renderer "^2.1.1"
+
+"@nuxtjs/color-mode@3.5.2":
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/color-mode/-/color-mode-3.5.2.tgz#4f2cbdd44009068b746e3bb0964b761b90969b73"
+  integrity sha512-cC6RfgZh3guHBMLLjrBB2Uti5eUoGM9KyauOaYS9ETmxNWBMTvpgjvSiSJp1OFljIXPIqVTJ3xtJpSNZiO3ZaA==
+  dependencies:
+    "@nuxt/kit" "^3.13.2"
+    pathe "^1.1.2"
+    pkg-types "^1.2.1"
+    semver "^7.6.3"
 
 "@parcel/watcher-android-arm64@2.5.0":
   version "2.5.0"
@@ -1031,7 +1078,7 @@
     smob "^1.0.0"
     terser "^5.17.4"
 
-"@rollup/pluginutils@^5.0.1", "@rollup/pluginutils@^5.1.0", "@rollup/pluginutils@^5.1.2", "@rollup/pluginutils@^5.1.3":
+"@rollup/pluginutils@^5.0.1", "@rollup/pluginutils@^5.1.0", "@rollup/pluginutils@^5.1.2", "@rollup/pluginutils@^5.1.3", "@rollup/pluginutils@^5.1.4":
   version "5.1.4"
   resolved "https://registry.npmjs.org/@rollup/pluginutils/-/pluginutils-5.1.4.tgz"
   integrity sha512-USm05zrsFxYLPdWWq+K3STlWiT/3ELn3RcV5hJMghpeAIhxfsUIg6mt12CBJBInWMV4VneoV7SfGv8xIwo2qNQ==
@@ -1178,11 +1225,6 @@
   version "1.20.2"
   resolved "https://registry.npmjs.org/@types/resolve/-/resolve-1.20.2.tgz"
   integrity sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==
-
-"@types/web-bluetooth@^0.0.20":
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/@types/web-bluetooth/-/web-bluetooth-0.0.20.tgz#f066abfcd1cbe66267cdbbf0de010d8a41b41597"
-  integrity sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==
 
 "@types/webidl-conversions@*":
   version "7.0.3"
@@ -1430,37 +1472,6 @@
   version "3.5.13"
   resolved "https://registry.npmjs.org/@vue/shared/-/shared-3.5.13.tgz"
   integrity sha512-/hnE/qP5ZoGpol0a5mDi45bOd7t3tjYJBjsgCsivow7D48cJeV5l05RD82lPqi7gRiphZM37rnhW1l6ZoCNNnQ==
-
-"@vueuse/core@12.4.0":
-  version "12.4.0"
-  resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-12.4.0.tgz#7a17f12fe941a16fb2ca9dbd60106975290bb34d"
-  integrity sha512-XnjQYcJwCsyXyIafyA6SvyN/OBtfPnjvJmbxNxQjCcyWD198urwm5TYvIUUyAxEAN0K7HJggOgT15cOlWFyLeA==
-  dependencies:
-    "@types/web-bluetooth" "^0.0.20"
-    "@vueuse/metadata" "12.4.0"
-    "@vueuse/shared" "12.4.0"
-    vue "^3.5.13"
-
-"@vueuse/integrations@^12.4.0":
-  version "12.4.0"
-  resolved "https://registry.yarnpkg.com/@vueuse/integrations/-/integrations-12.4.0.tgz#52c07910852f87b277b1748e08be919a4e762a1c"
-  integrity sha512-EZm+TLoZMeEwDnccnEqB54CvvcVKbVnJubOF380HqdyZAxWfQ8egnFCESdlXWEIbxFgjfhcGfZUvQx5Nqw9Ofw==
-  dependencies:
-    "@vueuse/core" "12.4.0"
-    "@vueuse/shared" "12.4.0"
-    vue "^3.5.13"
-
-"@vueuse/metadata@12.4.0":
-  version "12.4.0"
-  resolved "https://registry.yarnpkg.com/@vueuse/metadata/-/metadata-12.4.0.tgz#8a21ceec6fb3866b4ed445f0a3dc45dd5a4f2b64"
-  integrity sha512-AhPuHs/qtYrKHUlEoNO6zCXufu8OgbR8S/n2oMw1OQuBQJ3+HOLQ+EpvXs+feOlZMa0p8QVvDWNlmcJJY8rW2g==
-
-"@vueuse/shared@12.4.0":
-  version "12.4.0"
-  resolved "https://registry.yarnpkg.com/@vueuse/shared/-/shared-12.4.0.tgz#2d4b2d51068db0cc623f6e0342c54a652a9b466d"
-  integrity sha512-9yLgbHVIF12OSCojnjTIoZL1+UA10+O4E1aD6Hpfo/DKVm5o3SZIwz6CupqGy3+IcKI8d6Jnl26EQj/YucnW0Q==
-  dependencies:
-    vue "^3.5.13"
 
 abbrev@1:
   version "1.1.1"
@@ -1984,6 +1995,11 @@ consola@^3.2.3, consola@^3.3.1, consola@^3.3.3:
   version "3.3.3"
   resolved "https://registry.npmjs.org/consola/-/consola-3.3.3.tgz"
   integrity sha512-Qil5KwghMzlqd51UXM0b6fyaGHtOC22scxrwrz4A2882LyUMwQjnvaedN1HAeXzphspQ6CpHkzMAWxBTUruDLg==
+
+consola@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/consola/-/consola-3.4.0.tgz#4cfc9348fd85ed16a17940b3032765e31061ab88"
+  integrity sha512-EiPU8G6dQG0GFHNR8ljnZFki/8a+cQwEQ+7wpxdChl02Q8HXlwEZWD5lqAF8vC2sEC3Tehr8hy7vErz88LHyUA==
 
 console-control-strings@^1.0.0, console-control-strings@^1.1.0:
   version "1.1.0"
@@ -2610,7 +2626,7 @@ fast-fifo@^1.2.0, fast-fifo@^1.3.2:
   resolved "https://registry.npmjs.org/fast-fifo/-/fast-fifo-1.3.2.tgz"
   integrity sha512-/d9sfos4yxzpwkDkuN7k2SqFKtYNmCTzgfEpz82x34IM9/zc8KGxQoXg1liNC/izpRM/MBdt44Nmx41ZWqk+FQ==
 
-fast-glob@^3.2.7, fast-glob@^3.3.2:
+fast-glob@^3.2.7, fast-glob@^3.3.2, fast-glob@^3.3.3:
   version "3.3.3"
   resolved "https://registry.npmjs.org/fast-glob/-/fast-glob-3.3.3.tgz"
   integrity sha512-7MptL8U0cqcFdzIzwOTHoilX9x5BrNqye7Z/LuC7kCMRio1EMSyqRK3BEAUD7sXRq4iT4AzTVuZdhgQ2TCvYLg==
@@ -3009,6 +3025,11 @@ ignore@^7.0.0:
   resolved "https://registry.npmjs.org/ignore/-/ignore-7.0.0.tgz"
   integrity sha512-lcX8PNQygAa22u/0BysEY8VhaFRzlOkvdlKczDPnJvrkJD1EuqzEky5VYYKM2iySIuaVIDv9N190DfSreSLw2A==
 
+ignore@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-7.0.3.tgz#397ef9315dfe0595671eefe8b633fec6943ab733"
+  integrity sha512-bAH5jbK/F3T3Jls4I0SO1hmPR0dKU0a7+SY6n1yzRtG54FLO8d6w/nxLFX2Nb7dBu6cCWXPaAME6cYqFUMmuCA==
+
 image-meta@^0.2.1:
   version "0.2.1"
   resolved "https://registry.npmjs.org/image-meta/-/image-meta-0.2.1.tgz"
@@ -3379,6 +3400,14 @@ local-pkg@^0.5.1:
     mlly "^1.7.3"
     pkg-types "^1.2.1"
 
+local-pkg@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/local-pkg/-/local-pkg-1.0.0.tgz#a8d14dd41e78884f199ecd8b3eedaf0d376e2167"
+  integrity sha512-bbgPw/wmroJsil/GgL4qjDzs5YLTBMQ99weRsok1XCDccQeehbHA/I1oRvk2NPtr7KGZgT/Y5tPRnAtMqeG2Kg==
+  dependencies:
+    mlly "^1.7.3"
+    pkg-types "^1.3.0"
+
 lodash.defaults@^4.2.0:
   version "4.2.0"
   resolved "https://registry.npmjs.org/lodash.defaults/-/lodash.defaults-4.2.0.tgz"
@@ -3643,6 +3672,16 @@ mlly@^1.3.0, mlly@^1.6.1, mlly@^1.7.1, mlly@^1.7.2, mlly@^1.7.3:
     acorn "^8.14.0"
     pathe "^1.1.2"
     pkg-types "^1.2.1"
+    ufo "^1.5.4"
+
+mlly@^1.7.4:
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/mlly/-/mlly-1.7.4.tgz#3d7295ea2358ec7a271eaa5d000a0f84febe100f"
+  integrity sha512-qmdSIPC4bDJXgZTCR7XosJiNKySV7O215tsPtDN9iEO/7q/76b/ijtgRu/+epFXSJhijtTCCGp3DWS549P3xKw==
+  dependencies:
+    acorn "^8.14.0"
+    pathe "^2.0.1"
+    pkg-types "^1.3.0"
     ufo "^1.5.4"
 
 mongodb-connection-string-url@^3.0.0:
@@ -4168,6 +4207,11 @@ pathe@^2.0.0:
   resolved "https://registry.npmjs.org/pathe/-/pathe-2.0.0.tgz"
   integrity sha512-G7n4uhtk9qJt2hlD+UFfsIGY854wpF+zs2bUbQ3CQEUTcn7v25LRsrmurOxTo4bJgjE4qkyshd9ldsEuY9M6xg==
 
+pathe@^2.0.1:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/pathe/-/pathe-2.0.2.tgz#5ed86644376915b3c7ee4d00ac8c348d671da3a5"
+  integrity sha512-15Ztpk+nov8DR524R4BF7uEuzESgzUEAV4Ah7CUMNGXdE5ELuvxElxGXndBl32vMSsWa1jpNf22Z+Er3sKwq+w==
+
 perfect-debounce@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/perfect-debounce/-/perfect-debounce-1.0.0.tgz"
@@ -4204,6 +4248,15 @@ pkg-types@^1.0.3, pkg-types@^1.2.0, pkg-types@^1.2.1, pkg-types@^1.3.0:
     confbox "^0.1.8"
     mlly "^1.7.3"
     pathe "^1.1.2"
+
+pkg-types@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/pkg-types/-/pkg-types-1.3.1.tgz#bd7cc70881192777eef5326c19deb46e890917df"
+  integrity sha512-/Jm5M4RvtBFVkKWRu2BLUTNP8/M2a+UwuAX+ae4770q1qVGtfjG+WTCupoZixokjmHiry8uI+dlY8KXYV5HVVQ==
+  dependencies:
+    confbox "^0.1.8"
+    mlly "^1.7.4"
+    pathe "^2.0.1"
 
 pluralize@^8.0.0:
   version "8.0.0"
@@ -5260,6 +5313,26 @@ unimport@^3.13.1, unimport@^3.14.5:
     strip-literal "^2.1.1"
     unplugin "^1.16.0"
 
+unimport@^3.14.6:
+  version "3.14.6"
+  resolved "https://registry.yarnpkg.com/unimport/-/unimport-3.14.6.tgz#f01170aa2fb94c4f97b22c0ac2822ef7e8e0726d"
+  integrity sha512-CYvbDaTT04Rh8bmD8jz3WPmHYZRG/NnvYVzwD6V1YAlvvKROlAeNDUBhkBGzNav2RKaeuXvlWYaa1V4Lfi/O0g==
+  dependencies:
+    "@rollup/pluginutils" "^5.1.4"
+    acorn "^8.14.0"
+    escape-string-regexp "^5.0.0"
+    estree-walker "^3.0.3"
+    fast-glob "^3.3.3"
+    local-pkg "^1.0.0"
+    magic-string "^0.30.17"
+    mlly "^1.7.4"
+    pathe "^2.0.1"
+    picomatch "^4.0.2"
+    pkg-types "^1.3.0"
+    scule "^1.3.0"
+    strip-literal "^2.1.1"
+    unplugin "^1.16.1"
+
 universal-cookie@^7.2.2:
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/universal-cookie/-/universal-cookie-7.2.2.tgz#93ae9ec55baab89b24300473543170bb8112773c"
@@ -5310,6 +5383,14 @@ unplugin@^1.10.0, unplugin@^1.14.1, unplugin@^1.16.0:
   version "1.16.0"
   resolved "https://registry.npmjs.org/unplugin/-/unplugin-1.16.0.tgz"
   integrity sha512-5liCNPuJW8dqh3+DM6uNM2EI3MLLpCKp/KY+9pB5M2S2SR2qvvDHhKgBOaTWEbZTAws3CXfB0rKTIolWKL05VQ==
+  dependencies:
+    acorn "^8.14.0"
+    webpack-virtual-modules "^0.6.2"
+
+unplugin@^1.16.1:
+  version "1.16.1"
+  resolved "https://registry.yarnpkg.com/unplugin/-/unplugin-1.16.1.tgz#a844d2e3c3b14a4ac2945c42be80409321b61199"
+  integrity sha512-4/u/j4FrCKdi17jaxuJA0jClGxB1AvU2hw/IuayPc4ay1XGaJs/rbb4v5WKwAjNifjmXK9PIFyuPiaK8azyR9w==
   dependencies:
     acorn "^8.14.0"
     webpack-virtual-modules "^0.6.2"

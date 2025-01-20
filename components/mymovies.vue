@@ -19,10 +19,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
-import { useCookies } from '@vueuse/integrations/useCookies';
-import { useRouter } from 'vue-router';
-
 // Define a type for a movie
 type Movie = {
   imdbID: string;
@@ -36,13 +32,13 @@ type Movie = {
 
 // Local state to hold movies
 const movies = ref<Movie[]>([]); // Use Movie[] type to specify the structure of movies
-const cookies = useCookies(['auth']);
+const authCookie = useCookie('auth');
 const router = useRouter();
 
 // Fetch movies from the API
 const fetchMovies = async () => {
   try {
-    const token = cookies.get('auth');
+    const token = authCookie.value;
     if (!token) {
       router.push('/login');
       return;
@@ -68,7 +64,7 @@ const fetchMovies = async () => {
 // Remove a movie from the list
 const removeMovie = async (imdbID: string) => {
   try {
-    const token = cookies.get('auth');
+    const token = authCookie.value;
     if (!token) {
       router.push('/login');
       return;

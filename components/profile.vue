@@ -7,18 +7,16 @@
 </template>
 
 <script lang="ts" setup>
-import { useCookies } from '@vueuse/integrations/useCookies';
-
 interface User {
   email: string;
 }
 
 const user = ref<User | null>(null);
 const router = useRouter();
-const cookies = useCookies(['auth']);
+const authCookie = useCookie('auth');
 
 const logout = () => {
-  cookies.remove('auth');
+  authCookie.value = null;
   localStorage.removeItem('user');
   alert('You have been logged out.');
   router.push('/login');

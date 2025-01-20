@@ -24,8 +24,7 @@
 
 <script lang="ts" setup>
 import { myMovies, addMovieToMyList } from "~/store/mylist";
-import { useCookies } from '@vueuse/integrations/useCookies';
-const cookies = useCookies(['auth']);
+const authCookie = useCookie('auth');
 const router = useRouter();
 
 // Movie details logic
@@ -70,7 +69,7 @@ const saveMovie = async () => {
   }
 
   // Check if the user is logged in
-  const token = cookies.get('auth');
+  const token = authCookie.value;
   if (!token) {
     console.log("User is not logged in. Aborting save.");
     alert("You need to be logged in to save movies.");
@@ -84,26 +83,13 @@ const saveMovie = async () => {
   try {
     const savedMovie = {
       imdbID: movie.value?.imdbID || "",
-      Title: movie.value?.Title || "", // Ensure property names match
+      Title: movie.value?.Title || "",
       Year: movie.value?.Year || "",
       Genre: movie.value?.Genre || "",
       Director: movie.value?.Director || "",
       Plot: movie.value?.Plot || "",
       Poster: movie.value?.Poster || "",
     };
-
-    console.log("Sending movie to /api/movies:", savedMovie);
-
-    // Use $fetch to make a POST request
-    const result = await $fetch("/api/movies", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: savedMovie,
-    });
-
-    console.log("Server response:", result);
 
     // Add the movie to the local list
     addMovieToMyList(savedMovie);
