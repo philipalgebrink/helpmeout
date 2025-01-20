@@ -208,6 +208,18 @@ const searchClass = computed(() => {
 </script>
 
 <style scoped>
+
+.light-mode {
+  h3, p {
+    color: black;
+  }
+}
+.dark-mode {
+  h3, p {
+    color: white;
+  }
+}
+
 .search {
   display: flex;
   flex-direction: column;

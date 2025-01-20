@@ -18,5 +18,14 @@ onMounted(() => {
 </script>
 
 <style>
-/* Add your global layout styles here if needed */
+
+body {
+  background-color: white;
+  color: rgba(0,0,0,0.8);
+}
+.dark-mode body {
+  background-color: black;
+  color: #ebf4f1;
+}
+
 </style>
