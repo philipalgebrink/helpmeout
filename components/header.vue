@@ -10,10 +10,10 @@
       <!-- Authentication Button -->
       <div class="auth-button">
         <NuxtLink to="/profile">🙍‍♂️</NuxtLink>
+        <Themebutton />
       </div>
     </div>
   </header>
-  <Themebutton />
 </template>
 
 <script lang="ts" setup>
@@ -59,6 +59,7 @@ h1 {
   display: flex;
   justify-content: flex-end;
   flex: 1; /* Align to the right */
+  gap: 5px;
 }
 
 /* Auth button styling */
