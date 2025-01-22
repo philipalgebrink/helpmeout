@@ -13,6 +13,7 @@
       </div>
     </div>
   </header>
+  <Themebutton />
 </template>
 
 <script lang="ts" setup>

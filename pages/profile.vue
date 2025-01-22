@@ -1,6 +1,5 @@
 <template>
   <div class="profile-page">
-    <header />
     <profile />
     <mymovies />
     <NuxtLink class="goBack" to="/">Go back home</NuxtLink>
@@ -8,6 +7,7 @@
 </template>
 
 <script lang="ts" setup>
+
 </script>
 
 <style scoped>

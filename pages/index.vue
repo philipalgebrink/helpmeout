@@ -1,6 +1,4 @@
 <template>
-  <Header />
-  <themebutton />
   <Search />
 </template>
 

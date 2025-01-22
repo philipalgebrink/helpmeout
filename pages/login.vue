@@ -1,5 +1,4 @@
 <template>
-  <header />
   <login />
   <NuxtLink>Go back home</NuxtLink>
 </template>
