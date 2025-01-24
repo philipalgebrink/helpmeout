@@ -5,7 +5,9 @@
       <div class="left-placeholder"></div>
 
       <!-- Centered Title -->
-      <h1>Help Me Out</h1>
+      <NuxtLink style="text-decoration: none; color: inherit;" to="/">
+        <h1>Help Me Out</h1>
+      </NuxtLink>
 
       <!-- Authentication Button -->
       <div class="auth-button">
