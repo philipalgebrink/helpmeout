@@ -1,5 +1,5 @@
 <template>  
-  <button @click="toggleColorMode" :class="themeSwitch">
+  <button ref="themeButton" @click="toggleColorMode" :class="themeSwitch">
     💡
   </button>
 </template>
@@ -7,6 +7,7 @@
 <script lang="ts" setup>
 
 const colorMode = useColorMode();
+const themeButton = ref<HTMLButtonElement | null>(null);
 
 const toggleColorMode = () => {
   colorMode.preference = colorMode.preference === 'dark' ? 'light' : 'dark';
@@ -14,6 +15,22 @@ const toggleColorMode = () => {
 
 const themeSwitch = computed(() => {
   return colorMode.preference === 'dark' ? 'dark-mode' : 'light-mode';
+});
+
+// Ensure the button reflects the correct initial state
+onMounted(() => {
+  console.log('Initial color mode:', colorMode.preference);
+  if (themeButton.value) {
+    if (colorMode.preference === 'dark') {
+      document.body.classList.add('dark-mode');
+      themeButton.value.classList.add('dark-mode');
+      themeButton.value.classList.remove('light-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+      themeButton.value.classList.add('light-mode');
+      themeButton.value.classList.remove('dark-mode');
+    }
+  }
 });
 
 </script>
@@ -27,7 +44,6 @@ button.light-mode, button.dark-mode {
   padding: 10px 10px;
   font-size: 24px;
   cursor: pointer;
-  transition: all 0.3s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   text-decoration: none;
   letter-spacing: 1px;
