@@ -1,7 +1,11 @@
 <template>
-  <div class="login-page">
-    <h2>Login</h2>
-    <form @submit.prevent="handleLogin">
+  <div class="register-page">
+    <h2>Register</h2>
+    <form @submit.prevent="handleRegister">
+      <div>
+        <label for="nickname">Nickname:</label>
+        <input type="nickname" id="nickname" v-model="nickname" required />
+      </div>
       <div>
         <label for="email">Email:</label>
         <input type="email" id="email" v-model="email" required />
@@ -13,34 +17,27 @@
       <button type="submit">Log In</button>
     </form>
   </div>
-  <NuxtLink to="/register">
-    <p>Don't have an account? Create one here!</p>
+  <NuxtLink to="/login">
+    <p>Already have an account? Login here!</p>
   </NuxtLink>
 </template>
 
 <script lang="ts" setup>
 
+const nickname = ref('');
 const email = ref('');
 const password = ref('');
 const router = useRouter();
-const authCookie = useCookie('auth', { maxAge: 3600 * 1000 });
-
-const handleLogin = async () => {
+const handleRegister = async () => {
   try {
-    const response = await $fetch('/api/login', {
+    const response = await $fetch('/api/register', {
       method: 'POST',
-      body: { email: email.value, password: password.value },
+      body: { nickname: nickname.value, email: email.value, password: password.value },
     });
 
     if (response.statusCode === 200) {
-      if ('token' in response) {
-        authCookie.value = response.token;
-      }
-      if ('user' in response) {
-        localStorage.setItem('user', JSON.stringify(response.user));
-      }
-      alert('Login successful!');
-      router.push('/profile');
+      alert('Register successful!');
+      router.push('/login');
     } else {
       alert(response.message);
     }
@@ -52,7 +49,7 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-.login-page {
+.register-page {
   display: flex;
   flex-direction: column;
   align-items: center;
