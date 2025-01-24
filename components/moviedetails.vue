@@ -12,7 +12,7 @@
 
     <!-- Button dynamically changes based on whether the movie is saved -->
     <button @click="saveMovie" :disabled="isSaving || isMovieSaved">
-      {{ isMovieSaved ? "Already Saved" : isSaving ? "Saving..." : "Save Movie" }}
+      {{ isMovieSaved ? "Saved" : isSaving ? "Saving..." : "Save Movie" }}
     </button>
     <NuxtLink to="/">
       <p>Go Back</p>
@@ -78,7 +78,6 @@ const saveMovie = async () => {
     return;
   }
 
-  console.log("Saving...");
   isSaving.value = true;
 
   try {
@@ -162,7 +161,7 @@ button {
 }
 
 button:disabled {
-  background-color: #95a5a6;
+  background-color: #83aa7a;
   cursor: not-allowed;
 }
 
