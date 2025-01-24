@@ -111,9 +111,7 @@ onMounted(() => {
 <style>
 .movie-details {
   max-width: 600px;
-  margin: 0 auto;
   text-align: center;
-  padding: 20px;
 }
 
 img {

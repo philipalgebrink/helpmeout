@@ -1,12 +1,14 @@
 <template>
-  <div class="my-movies">
+  <div class="mymovies-container">
     <h2>My Movies</h2>
-    <div v-if="movies.length" class="movie-grid">
+    <div v-if="movies.length" class="my-movies">
       <div v-for="movie in movies" :key="movie.imdbID" class="movie-item">
+      <NuxtLink :to="`/movie/${movie.imdbID}`">
         <img
           :src="movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150x225?text=No+Poster'"
           alt="Poster"
         />
+      </NuxtLink>
         <div class="movie-details">
           <h3>{{ movie.Title }}</h3>
           <p>{{ movie.Year }}</p>
@@ -93,24 +95,67 @@ onMounted(fetchMovies);
 </script>
 
 <style scoped>
-h2 {
-  letter-spacing: 2px;
+
+.mymovies-container {
+  margin-top: 20px;
+  text-align: center;
+  margin-bottom: 50px;
 }
+
 .my-movies {
-  padding: 20px;
-  text-align: center;
-}
-.movie-grid {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(350px, 1fr));
   flex-wrap: wrap;
-  gap: 20px;
   justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
 }
+
 .movie-item {
-  width: 150px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 300px;
+  height: 600px;
+  text-align: left;
 }
+
+.movie-item img {
+  width: 100%;
+  height: 450px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.movie-item:hover {
+  scale: 1.10;
+}
+
+.movie-item a {
+  text-decoration: none;
+  color: #000;
+}
+
 .movie-details {
-  margin-top: 10px;
+  text-align: left;
 }
+
+.movie-details h3 {
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+.movie-details p {
+  font-size: 16px;
+}
+
+.movie-details button {
+  margin-top: 20px;
+  background-color: #f44336;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 </style>
