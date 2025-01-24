@@ -14,7 +14,7 @@
         <label for="password">Password:</label>
         <input type="password" id="password" v-model="password" required />
       </div>
-      <button type="submit">Log In</button>
+      <button type="submit">Register</button>
     </form>
   </div>
   <NuxtLink to="/login">
