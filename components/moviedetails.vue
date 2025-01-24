@@ -14,8 +14,9 @@
     <button @click="saveMovie" :disabled="isSaving || isMovieSaved">
       {{ isMovieSaved ? "Already Saved" : isSaving ? "Saving..." : "Save Movie" }}
     </button>
-
-    <NuxtLink to="/">Go back home</NuxtLink>
+    <NuxtLink to="/">
+      <p>Go Back</p>
+    </NuxtLink>
   </div>
   <div v-else class="loading">
     <p>Loading movie details...</p>
@@ -110,8 +111,10 @@ onMounted(() => {
 
 <style>
 .movie-details {
+  margin: auto;
   max-width: 600px;
   text-align: center;
+  margin-top: 100px;
 }
 
 img {
@@ -121,15 +124,21 @@ img {
   margin-bottom: 20px;
 }
 
+h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+
 p {
-  font-size: 16px;
+  font-size: 24px;
   margin: 10px 0;
 }
 
 a {
   color: #3498db;
   text-decoration: none;
-  font-size: 18px;
+  font-size: 24px;
 }
 
 a:hover {
