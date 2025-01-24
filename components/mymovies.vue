@@ -3,17 +3,17 @@
     <h2>My Movies</h2>
     <div v-if="movies.length" class="my-movies">
       <div v-for="movie in movies" :key="movie.imdbID" class="movie-item">
-      <NuxtLink :to="`/movie/${movie.imdbID}`">
+      <NuxtLink style="text-decoration: none; color: inherit;" :to="`/movie/${movie.imdbID}`">
         <img
           :src="movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150x225?text=No+Poster'"
           alt="Poster"
         />
-      </NuxtLink>
         <div class="movie-details">
           <h3>{{ movie.Title }}</h3>
           <p>{{ movie.Year }}</p>
-          <button @click="removeMovie(movie.imdbID)">Remove</button>
         </div>
+      </NuxtLink>
+      <button @click="removeMovie(movie.imdbID)">Remove</button>
       </div>
     </div>
     <p v-else>No movies saved yet or unable to fetch data.</p>
@@ -149,13 +149,14 @@ onMounted(fetchMovies);
   font-size: 16px;
 }
 
-.movie-details button {
+.movie-item button {
   margin-top: 20px;
   background-color: #f44336;
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  width: 120px;
 }
 
 </style>

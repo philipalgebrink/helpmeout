@@ -19,7 +19,7 @@ onMounted(() => {
 </script>
 
 <style>
-
+/* Global styles */
 .light-mode body {
   transition: background-color 1s ease;
   background-color: white;
