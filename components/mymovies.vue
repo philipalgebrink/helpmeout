@@ -138,6 +138,7 @@ onMounted(fetchMovies);
 
 .movie-details {
   text-align: left;
+  margin: 0 auto;
 }
 
 .movie-details h3 {

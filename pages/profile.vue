@@ -1,7 +1,6 @@
 <template>
   <div class="profile-page">
     <profile />
-    <mymovies />
     <NuxtLink class="goBack" to="/">Go back home</NuxtLink>
   </div>
 </template>

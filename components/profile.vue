@@ -4,6 +4,7 @@
     <p>You are logged in as <strong>{{ user?.email }}</strong>.</p>
     <button @click="logout">Log Out</button>
   </div>
+  <mymovies />
 </template>
 
 <script lang="ts" setup>

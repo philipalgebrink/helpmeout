@@ -307,7 +307,7 @@ input[type="text"] {
 }
 
 .movie-details {
-  
+  margin: 0 auto;
 }
 
 .movie-details h3 {
