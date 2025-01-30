@@ -40,7 +40,7 @@ const handleLogin = async () => {
         localStorage.setItem('user', JSON.stringify(response.user));
       }
       alert('Login successful!');
-      router.push('/profile');
+      router.push(`/u/${response.user.nickname}`); // Redirect to user profile
     } else {
       alert(response.message);
     }

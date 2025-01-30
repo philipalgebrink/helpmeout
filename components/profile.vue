@@ -1,20 +1,23 @@
 <template>
   <div class="profile-page">
-    <h1>Welcome to Your Profile</h1>
-    <p>You are logged in as <strong>{{ user?.email }}</strong>.</p>
+    <h1>{{ nickname }}</h1>
     <button @click="logout">Log Out</button>
+    <mymovies :nickname="nickname" />
   </div>
-  <mymovies />
 </template>
 
 <script lang="ts" setup>
+
 interface User {
   email: string;
+  nickname: string;
 }
 
 const user = ref<User | null>(null);
 const router = useRouter();
+const route = useRoute();
 const authCookie = useCookie('auth');
+const nickname = ref(route.params.nickname as string);
 
 const logout = () => {
   authCookie.value = null;
@@ -23,14 +26,12 @@ const logout = () => {
   router.push('/login');
 };
 
-onMounted(() => {
-  const storedUser = localStorage.getItem('user');
-  if (storedUser) {
-    user.value = JSON.parse(storedUser);
-  } else {
-    router.push('/login');
-  }
-});
+const updateUser = () => {
+  nickname.value = route.params.nickname as string;
+};
+
+onMounted(updateUser);
+watch(() => route.params.nickname, updateUser);
 </script>
 
 <style scoped>

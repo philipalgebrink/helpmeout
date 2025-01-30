@@ -11,7 +11,7 @@ if (!uri) {
 const client = new MongoClient(uri);
 
 export default defineEventHandler(async (event) => {
-  const { email, password } = await readBody(event);
+  const { nickname, email, password } = await readBody(event);
 
   try {
     await client.connect();
@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    return { statusCode: 200, token, user: { email: user.email, name: user.name } };
+    return { statusCode: 200, token, user: { email: user.email, nickname: user.nickname } };
   } catch (error) {
     console.error('Error during login:', error);
     return { statusCode: 500, message: 'Internal server error' };

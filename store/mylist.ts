@@ -17,6 +17,9 @@ export const myMovies = reactive<{
   movies: [],
 });
 
+// Define a reactive reference for nickname
+const nickname = ref<string>('');
+
 // Add a movie to the list and save it to the database
 export const addMovieToMyList = async (movie: Movie) => {
   const exists = myMovies.movies.some((m) => m.imdbID === movie.imdbID);
@@ -83,53 +86,39 @@ export const initializeMyMovies = async () => {
   try {
     const authCookie = useCookie('auth');
     const token = authCookie.value;
+
+    // Retrieve nickname from localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      nickname.value = user.nickname; // Set the nickname from localStorage
+    }
+
     if (!token) {
       return;
     }
 
+    // Include the nickname in the query parameters
     const response = await $fetch<{
       statusCode: number;
       result: Movie[];
     }>("/api/movies", {
+      method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
+      },
+      params: {
+        nickname: nickname.value, // Use the reactive nickname here
       },
     });
 
     if (response.statusCode === 200 && response.result) {
       // Populate the `myMovies` reactive state with the fetched movies
       myMovies.movies = response.result;
-      console.log("Movies initialized from database:", myMovies.movies);
     } else {
       console.error("Failed to fetch movies: Unexpected response structure", response);
     }
   } catch (error) {
     console.error("Failed to initialize movies from database:", error);
-  }
-};
-
-// Fetch movies from the database
-export const fetchMoviesFromDB = async () => {
-  try {
-    const authCookie = useCookie('auth');
-    const token = authCookie.value;
-    if (!token) {
-      return;
-    }
-
-    const response = await $fetch<{ statusCode: number; result?: Movie[] }>("/api/movies", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.statusCode === 200 && response.result) {
-      myMovies.movies = response.result; // Update reactive state
-      console.log("Fetched movies:", myMovies.movies);
-    } else {
-      console.error("Unexpected response structure or no movies found:", response);
-    }
-  } catch (error) {
-    console.error("Failed to fetch movies:", error);
   }
 };

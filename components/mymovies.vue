@@ -1,27 +1,24 @@
 <template>
-  <div class="mymovies-container">
+  <div v-if="nickname">
     <h2>My Movies</h2>
     <div v-if="movies.length" class="my-movies">
       <div v-for="movie in movies" :key="movie.imdbID" class="movie-item">
-      <NuxtLink style="text-decoration: none; color: inherit;" :to="`/movie/${movie.imdbID}`">
-        <img
-          :src="movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150x225?text=No+Poster'"
-          alt="Poster"
-        />
-        <div class="movie-details">
-          <h3>{{ movie.Title }}</h3>
-          <p>{{ movie.Year }}</p>
-        </div>
-      </NuxtLink>
-      <button @click="removeMovie(movie.imdbID)">Remove</button>
+        <NuxtLink :to="`/movie/${movie.imdbID}`">
+          <img :src="movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150x225?text=No+Poster'" alt="Poster" />
+          <div class="movie-details">
+            <h3>{{ movie.Title }}</h3>
+            <p>{{ movie.Year }}</p>
+          </div>
+        </NuxtLink>
+        <button @click="removeMovie(movie.imdbID)">Remove</button>
       </div>
     </div>
     <p v-else>No movies saved yet or unable to fetch data.</p>
+    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
   </div>
 </template>
 
 <script lang="ts" setup>
-// Define a type for a movie
 type Movie = {
   imdbID: string;
   Title: string;
@@ -32,70 +29,95 @@ type Movie = {
   Poster: string;
 };
 
-// Local state to hold movies
-const movies = ref<Movie[]>([]); // Use Movie[] type to specify the structure of movies
+const movies = ref<Movie[]>([]);
+const errorMessage = ref<string | null>(null);
 const authCookie = useCookie('auth');
 const router = useRouter();
+const route = useRoute();
+const nickname = ref(route.params.nickname as string);
 
-// Fetch movies from the API
+const checkAuthToken = () => {
+  const token = authCookie.value;
+  if (!token) {
+    router.push('/login');
+    return false;
+  }
+  return true;
+};
+
 const fetchMovies = async () => {
+  errorMessage.value = null; // Clear previous error
   try {
-    const token = authCookie.value;
-    if (!token) {
-      router.push('/login');
+    if (!checkAuthToken()) return;
+
+    if (!nickname.value) {
+      console.error('Nickname is missing before API call:', nickname.value);
       return;
     }
 
-    const response = await fetch('/api/movies', {
+    const apiUrl = `/api/movies?nickname=${nickname.value}`;
+
+    const response = await fetch(apiUrl, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${authCookie.value}`,
       },
     });
 
+    const responseData = await response.json();
+
     if (response.ok) {
-      const data = await response.json();
-      movies.value = data.result;
+      movies.value = responseData.result;
     } else {
-      console.error('Failed to fetch movies:', await response.json());
+      errorMessage.value = 'Failed to fetch movies.';
+      console.error('Failed to fetch movies:', responseData);
     }
   } catch (error) {
+    errorMessage.value = 'Error fetching movies.';
     console.error('Error fetching movies:', error);
   }
 };
 
-// Remove a movie from the list
 const removeMovie = async (imdbID: string) => {
+  errorMessage.value = null; // Clear previous error
   try {
-    const token = authCookie.value;
-    if (!token) {
-      router.push('/login');
-      return;
-    }
+    if (!checkAuthToken()) return;
 
     const response = await fetch(`/api/movies/${imdbID}`, {
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${authCookie.value}`,
       },
     });
 
     if (response.ok) {
-      // Update local state
-      movies.value = movies.value.filter((movie) => movie.imdbID !== imdbID);
+      const index = movies.value.findIndex((movie) => movie.imdbID === imdbID);
+      if (index !== -1) {
+        movies.value.splice(index, 1); // Remove the movie directly from the array
+      }
     } else {
+      errorMessage.value = 'Failed to delete movie.';
       console.error('Failed to delete movie:', await response.json());
     }
   } catch (error) {
+    errorMessage.value = 'Error deleting movie.';
     console.error('Error deleting movie:', error);
   }
 };
 
-// Fetch movies when the component is mounted
-onMounted(fetchMovies);
+onMounted(() => {
+  if (nickname.value) {
+    fetchMovies();
+  }
+});
+
+watch(() => route.params.nickname, (newNickname, oldNickname) => {
+  if (newNickname && newNickname !== oldNickname) {
+    fetchMovies();
+  }
+});
 </script>
 
 <style scoped>
-
 .mymovies-container {
   margin-top: 20px;
   text-align: center;
@@ -146,6 +168,13 @@ onMounted(fetchMovies);
   letter-spacing: 1px;
 }
 
+.light-mode h3, .light-mode p {
+  color: black;
+}
+.dark-mode h3, .dark-mode p {
+  color: white;
+}
+
 .movie-details p {
   font-size: 16px;
 }
@@ -160,4 +189,9 @@ onMounted(fetchMovies);
   width: 120px;
 }
 
+.error {
+  color: red;
+  font-size: 16px;
+  margin-top: 20px;
+}
 </style>
