@@ -22,11 +22,13 @@ onMounted(() => {
   console.log('Initial color mode:', colorMode.preference);
   if (themeButton.value) {
     if (colorMode.preference === 'dark') {
+      document.body.classList.remove('light-mode');
       document.body.classList.add('dark-mode');
       themeButton.value.classList.add('dark-mode');
       themeButton.value.classList.remove('light-mode');
     } else {
       document.body.classList.remove('dark-mode');
+      document.body.classList.add('light-mode');
       themeButton.value.classList.add('light-mode');
       themeButton.value.classList.remove('dark-mode');
     }
