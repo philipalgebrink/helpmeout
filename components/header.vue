@@ -11,7 +11,7 @@
 
       <!-- Authentication Button -->
       <div class="auth-button">
-        <NuxtLink to="/profile">🙍‍♂️</NuxtLink>
+        <Profilebutton />
         <Themebutton />
       </div>
     </div>
