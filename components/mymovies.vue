@@ -1,6 +1,5 @@
 <template>
   <div v-if="nickname">
-    <h2>My Movies</h2>
     <div v-if="movies.length" class="my-movies">
       <div v-for="movie in movies" :key="movie.imdbID" class="movie-item">
         <NuxtLink :to="`/movie/${movie.imdbID}`">
@@ -180,7 +179,6 @@ watch(() => route.params.nickname, (newNickname, oldNickname) => {
 }
 
 .movie-item button {
-  margin-top: 20px;
   background-color: #f44336;
   color: #fff;
   border: none;
