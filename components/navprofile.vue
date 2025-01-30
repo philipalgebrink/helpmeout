@@ -2,7 +2,7 @@
   <nav class="nav-profile">
     <ul>
       <li>
-        <NuxtLink :to="`/u/${nickname}/bio`" active-class="active">Bio</NuxtLink>
+        <NuxtLink :to="`/u/${nickname}/`" active-class="active">Bio</NuxtLink>
       </li>
       <li>
         <NuxtLink :to="`/u/${nickname}/collections`" active-class="active">Collections</NuxtLink>
