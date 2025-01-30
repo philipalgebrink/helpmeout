@@ -131,7 +131,6 @@ const fetchAllResults = async () => {
             const movieDetails = await movieDetailsResponse.json();
 
             if (movieDetails.Response === "True") {
-              console.log(`Fetched IMDb Rating for ${movie.Title}:`, movieDetails.imdbRating); // Log IMDb rating
               return { ...movie, imdbRating: movieDetails.imdbRating, Genre: movieDetails.Genre,}; // Add IMDb rating to the movie object
             } else {
               console.warn(`Failed to fetch details for ${movie.Title}:`, movieDetails.Error);

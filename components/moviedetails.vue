@@ -65,14 +65,12 @@ const fetchMovieDetails = async () => {
 
 const saveMovie = async () => {
   if (isMovieSaved.value) {
-    console.log("Movie is already saved. Aborting save.");
     return; // Prevent saving if already saved
   }
 
   // Check if the user is logged in
   const token = authCookie.value;
   if (!token) {
-    console.log("User is not logged in. Aborting save.");
     alert("You need to be logged in to save movies.");
     router.push('/login');
     return;
@@ -93,7 +91,6 @@ const saveMovie = async () => {
 
     // Add the movie to the local list
     addMovieToMyList(savedMovie);
-    console.log("Movie saved to list:", savedMovie);
   } catch (error) {
     console.error("Error saving movie:", error);
     // Optional: Display an error message to the user

@@ -16,11 +16,9 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
-      console.log("Connecting to MongoDB...");
       client = new MongoClient(uri); // Initialize the client once
       await client.connect();
       db = client.db(dbName); // Get the database reference
-      console.log("Connected to MongoDB");
     } catch (error) {
       console.error("Error connecting to MongoDB:", error);
       throw error;

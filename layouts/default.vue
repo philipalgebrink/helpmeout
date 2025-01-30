@@ -9,7 +9,6 @@
 import { initializeMyMovies } from "@/store/mylist"; // Import the initialization function
 
 onMounted(() => {
-  console.log("Initializing movies...");
   initializeMyMovies()
     .then(() => console.log("Movies successfully initialized"))
     .catch((err) => console.error("Failed to initialize movies:", err));

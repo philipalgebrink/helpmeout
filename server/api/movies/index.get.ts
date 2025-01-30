@@ -39,7 +39,6 @@ export default defineEventHandler(async (event) => {
     // Fetch movies from the user's collection
     const movies = await event.context.db.collection(collectionName).find().toArray();
 
-    console.log("Fetched movies from MongoDB:", movies);
     return { statusCode: 200, result: movies };
   } catch (err) {
     console.error("Failed to fetch movies:", err);

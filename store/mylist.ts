@@ -44,7 +44,6 @@ export const addMovieToMyList = async (movie: Movie) => {
         },
         body: movie,
       });
-      console.log("Movie successfully saved to the database:", movie);
     } catch (err) {
       console.error("Failed to save movie to the database:", err);
 
@@ -75,7 +74,6 @@ export const removeMovieFromMyList = async (imdbID: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(`Movie with ID ${imdbID} successfully removed from the database.`);
   } catch (err) {
     console.error(`Failed to remove movie with ID ${imdbID} from the database:`, err);
   }

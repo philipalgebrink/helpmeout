@@ -19,7 +19,6 @@ const themeSwitch = computed(() => {
 
 // Ensure the button reflects the correct initial state
 onMounted(() => {
-  console.log('Initial color mode:', colorMode.preference);
   if (themeButton.value) {
     if (colorMode.preference === 'dark') {
       document.body.classList.remove('light-mode');
