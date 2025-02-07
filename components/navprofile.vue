@@ -2,16 +2,19 @@
   <nav class="nav-profile">
     <ul>
       <li>
-        <NuxtLink :to="`/u/${nickname}/`" active-class="active">Bio</NuxtLink>
+        <NuxtLink :to="`/u/${nickname}/lists`" active-class="active">
+        <p>23</p>
+        lists</NuxtLink>
       </li>
       <li>
-        <NuxtLink :to="`/u/${nickname}/collections`" active-class="active">Collections</NuxtLink>
+        <NuxtLink :to="`/u/${nickname}/reviews`" active-class="active">
+        <p>43</p>
+        reviews</NuxtLink>
       </li>
       <li>
-        <NuxtLink :to="`/u/${nickname}/followers`" active-class="active">Followers</NuxtLink>
-      </li>
-      <li>
-        <NuxtLink :to="`/u/${nickname}/following`" active-class="active">Following</NuxtLink>
+        <NuxtLink :to="`/u/${nickname}/friends`" active-class="active">
+        <p>17</p>
+        friends</NuxtLink>
       </li>
     </ul>
   </nav>
@@ -27,7 +30,7 @@ const nickname = ref(route.params.nickname as string);
 .nav-profile {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  height: 55px;
 }
 
 .nav-profile ul {
@@ -39,12 +42,18 @@ const nickname = ref(route.params.nickname as string);
 
 .nav-profile li {
   margin: 0;
+  line-height: 10px;
 }
 
 .nav-profile a {
   text-decoration: none;
-  color: inherit;
+  color: grey;
+  font-size: 18px;
+}
+
+.nav-profile p {
   font-size: 24px;
+  color: white;
 }
 
 .nav-profile a.active {

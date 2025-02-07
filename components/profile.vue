@@ -1,18 +1,72 @@
 <template>
-  <h1 v-if="showButton">Welcome to Your Profile, {{ nickname }}</h1>
-  <h1 v-else>{{ nickname }}</h1>
-  <navprofile />
-  <mybio />
-  <logoutbutton v-if="showButton" @click="logout"/>
+  <div class="profile">
+    <div class="profileHeader">
+      <div class="profilePictureContainer">
+        <img class="profilePicture" src="https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg" alt="profile picture" />
+        <div class="profileButtons">
+          <notificationbutton />
+          <editbutton />
+        </div>
+      </div>
+      <div class="profileInfo">
+        <h1>@ {{ nickname }}</h1>
+        <navprofile />
+      </div>
+    </div>
+    <div class="contentContainer">
+      <mylists />
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
-const { showButton, nickname } = useShowButton();
-const { logout } = useLogout();
-const router = useRouter();
-const authCookie = useCookie('auth');
+const { nickname } = useShowButton();
 </script>
 
 <style scoped>
+.profile {
+  width: 800px;
+  padding: 0 20px;
+  height: 100vh;
+}
 
+.profileHeader {
+  display: flex;
+  gap: 20px;
+}
+
+.profile h1 {
+  font-size: 36px;
+}
+
+.profilePictureContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.profilePicture {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
+
+.profileButtons {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0 0 0;
+}
+
+.navContainer {
+  gap: 20px;
+}
+
+.contentContainer {
+  margin-top: 20px;
+}
 </style>
