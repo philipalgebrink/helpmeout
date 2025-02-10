@@ -1,8 +1,6 @@
 <template>
   <div class="mylists">
-    <div class="mylistsHeader">
-      <p>My Lists ➡️</p>
-    </div>
+    <p>My Lists ➡️</p>
     <div class="mylistsContainer">
       <ul>
         <li>
@@ -33,11 +31,6 @@
 .mylists {
   display: flex;
   flex-direction: column;
-}
-
-.mylistsHeader {
-  display: flex;
-  align-items: center;
 }
 
 .mylistsContainer {

@@ -12,7 +12,11 @@
         <h1>@ {{ nickname }}</h1>
         <navprofile />
       </div>
+      <div class="settingsButton">
+        <settingsbutton />
+      </div>
     </div>
+    <spacer />
     <div class="contentContainer">
       <mylists />
     </div>
@@ -20,14 +24,13 @@
 </template>
 
 <script lang="ts" setup>
+
 const { nickname } = useShowButton();
 </script>
 
 <style scoped>
 .profile {
   width: 800px;
-  padding: 0 20px;
-  height: 100vh;
 }
 
 .profileHeader {
@@ -62,11 +65,16 @@ const { nickname } = useShowButton();
   margin: 20px 0 0 0;
 }
 
+.settingsButton {
+  margin-left: auto;
+  filter: invert();
+}
+
 .navContainer {
   gap: 20px;
 }
 
 .contentContainer {
-  margin-top: 20px;
 }
+
 </style>
