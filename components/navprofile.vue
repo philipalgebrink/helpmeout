@@ -47,13 +47,18 @@ const nickname = ref(route.params.nickname as string);
 
 .nav-profile a {
   text-decoration: none;
-  color: grey;
   font-size: 18px;
 }
 
 .nav-profile p {
   font-size: 24px;
   color: white;
+}
+
+.light-mode {
+  .nav-profile p {
+    color: black;
+  }
 }
 
 .nav-profile a.active {
