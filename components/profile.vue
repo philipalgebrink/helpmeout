@@ -18,7 +18,7 @@
     </div>
     <spacer />
     <div class="contentContainer">
-      <mylists />
+      <mylists maxLists="4"/>
       <spacer />
       <myreviews />
       <spacer />
