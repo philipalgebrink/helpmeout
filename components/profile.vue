@@ -1,9 +1,9 @@
 <template>
   <div class="profile">
-    <div class="profileHeader">
+    <div class="profileHeader" :style="{ backgroundImage: `url(${profileBannerUrl})` }">
       <div class="profilePictureContainer">
-        <img class="profilePicture" src="https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg" alt="profile picture" />
-        <div class="profileButtons">
+        <profilepicture />
+        <div v-if="showButton" class="profileButtons">
           <notificationbutton />
           <editbutton />
         </div>
@@ -29,8 +29,34 @@
 </template>
 
 <script lang="ts" setup>
+const { showButton, nickname } = useShowButton();
+const profilePictureUrl = ref('https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg');
+const profileBannerUrl = ref('https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg');
 
-const { nickname } = useShowButton();
+onMounted(async () => {
+  try {
+    const [pictureResponse, bannerResponse] = await Promise.all([
+      fetch(`/api/profile-picture?nickname=${nickname.value}`),
+      fetch(`/api/profile-banner?nickname=${nickname.value}`)
+    ]);
+
+    if (pictureResponse.ok) {
+      const pictureData = await pictureResponse.json();
+      profilePictureUrl.value = pictureData.profilePictureUrl || profilePictureUrl.value;
+    } else {
+      console.error('Failed to fetch profile picture');
+    }
+
+    if (bannerResponse.ok) {
+      const bannerData = await bannerResponse.json();
+      profileBannerUrl.value = bannerData.profileBannerUrl || profileBannerUrl.value;
+    } else {
+      console.error('Failed to fetch profile banner');
+    }
+  } catch (error) {
+    console.error('Error fetching profile data:', error);
+  }
+});
 </script>
 
 <style scoped>
@@ -41,6 +67,10 @@ const { nickname } = useShowButton();
 .profileHeader {
   display: flex;
   gap: 20px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 210px;
 }
 
 .profile h1 {
@@ -50,12 +80,6 @@ const { nickname } = useShowButton();
 .profilePictureContainer {
   display: flex;
   flex-direction: column;
-}
-
-.profilePicture {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
 }
 
 .profileButtons {
