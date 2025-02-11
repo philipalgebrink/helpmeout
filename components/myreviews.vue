@@ -47,11 +47,11 @@
 .myreviews {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  max-height: 500px;
 }
 
 .myreviewsContainer {
-  margin-top: 10px;
+  margin: 0 auto;
 }
 
 .review {
@@ -69,11 +69,13 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 800px;
 }
 
 .bio {
   max-height: 100px;
   overflow: hidden;
+  max-width: 350px;
 }
 
 .review h1 {
@@ -82,6 +84,11 @@
 
 .review p {
   font-size: 16px;
+}
+
+.review img {
+  width: 300px;
+  height: 180px;
 }
 
 .myreviewsContainer ul {
@@ -103,6 +110,5 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 440px;
 }
 </style>
