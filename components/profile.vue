@@ -5,7 +5,7 @@
         <profilepicture />
         <div v-if="showButton" class="profileButtons">
           <notificationbutton />
-          <editbutton />
+          <editprofilebutton />
         </div>
       </div>
       <div class="profileInfo">
