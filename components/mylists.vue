@@ -35,16 +35,18 @@
 
 .mylistsContainer {
   margin-top: 10px;
+  width: 100%;
+  height: 100%;
 }
 
 .mylistsContainer ul {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
 }
 
 .mylistsContainer li {
   list-style: none;
-  margin: auto;
+  align-items: center;
 }
 </style>

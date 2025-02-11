@@ -19,6 +19,11 @@
     <spacer />
     <div class="contentContainer">
       <mylists />
+      <spacer />
+      <myreviews />
+      <spacer />
+      <myfriends />
+      <spacer />
     </div>
   </div>
 </template>
