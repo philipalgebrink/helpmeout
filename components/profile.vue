@@ -12,7 +12,7 @@
         <h1>@ {{ nickname }}</h1>
         <navprofile />
       </div>
-      <div class="settingsButton">
+      <div v-if="showButton" class="settingsButton">
         <settingsbutton />
       </div>
     </div>
@@ -71,6 +71,8 @@ onMounted(async () => {
   background-position: center;
   background-repeat: no-repeat;
   height: 210px;
+  align-items: center;
+  position: relative;
 }
 
 .profile h1 {
@@ -95,7 +97,9 @@ onMounted(async () => {
 }
 
 .settingsButton {
-  margin-left: auto;
+  position: absolute;
+  top: 0;
+  right: 0;
   filter: invert();
 }
 
@@ -105,5 +109,4 @@ onMounted(async () => {
 
 .contentContainer {
 }
-
 </style>
