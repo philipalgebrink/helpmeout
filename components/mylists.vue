@@ -2,11 +2,11 @@
   <div class="mylists">
     <div class="mylistsContainer">
       <ul>
-        <li v-for="list in lists.slice(0, maxLists)" :key="list._id">
+        <li v-for="list in displayedLists" :key="list._id">
           <img :src="list.listImage && list.listImage !== 'N/A' ? list.listImage : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAWWV_TzALxkkrkC-4yhP7_2DTYAa7N0cABg&s'" alt="movielist" />
           <div class="listTitle">
             <p>{{ list.listName }}</p>
-            <editlistbutton :listId="list._id" />
+            <editlistbutton v-if="!list.fake" :listId="list._id" />
           </div>
         </li>
       </ul>
@@ -24,6 +24,16 @@ const props = defineProps({
 
 const { showButton, nickname } = useShowButton();
 const lists = ref([]);
+const loading = ref(true);
+
+const fakeLists = Array.from({ length: props.maxLists }, (_, index) => ({
+  _id: `fake-${index}`,
+  listName: 'Loading...',
+  listImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAWWV_TzALxkkrkC-4yhP7_2DTYAa7N0cABg&s',
+  fake: true,
+}));
+
+const displayedLists = computed(() => (loading.value ? fakeLists : lists.value.slice(0, props.maxLists)));
 
 onMounted(async () => {
   try {
@@ -36,6 +46,8 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error('Error fetching lists:', error);
+  } finally {
+    loading.value = false;
   }
 });
 </script>

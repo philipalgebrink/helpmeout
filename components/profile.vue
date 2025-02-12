@@ -4,10 +4,10 @@
   </div>
   <div v-else class="profile">
     <div class="profileHeader">
-      <div class="backgroundImage" :style="{ backgroundImage: `url(${profileBannerUrl})` }"></div>
+      <div class="backgroundImage" :style="{ backgroundImage: `url(${profileBannerUrl || placeholderBannerUrl})` }"></div>
       <div class="gradientOverlay"></div>
       <div class="profilePictureContainer">
-        <profilepicture :src="profilePictureUrl" />
+        <profilepicture :src="profilePictureUrl || placeholderProfilePictureUrl" />
         <div v-if="showButton" class="profileButtons">
           <notificationbutton />
           <editprofilebutton />
@@ -27,7 +27,9 @@
         <NuxtLink @click.prevent="GoToLists">{{ showButton ? 'My Lists' : `${nickname}'s Lists` }} ➡️</NuxtLink>
         <createlistbutton v-if="showButton" />
       </div>
-      <mylists :maxLists="4" />
+      <div class="mylistsContainer">
+        <mylists :maxLists="4" />
+      </div>
       <spacer />
       <NuxtLink @click="">{{ showButton ? 'My Reviews' : `${nickname}'s Reviews` }} ➡️</NuxtLink>
       <myreviews />
@@ -46,6 +48,9 @@ const profilePictureUrl = ref('');
 const profileBannerUrl = ref('');
 const isLoading = ref(true);
 
+const placeholderProfilePictureUrl = 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=';
+const placeholderBannerUrl = 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=';
+
 const router = useRouter();
 
 const GoToLists = () => {
@@ -61,21 +66,23 @@ onMounted(async () => {
 
     if (pictureResponse.ok) {
       const pictureData = await pictureResponse.json();
-      profilePictureUrl.value = pictureData.profilePictureUrl || 'https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg';
+      profilePictureUrl.value = pictureData.profilePictureUrl || placeholderProfilePictureUrl;
     } else {
       console.error('Failed to fetch profile picture');
     }
 
     if (bannerResponse.ok) {
       const bannerData = await bannerResponse.json();
-      profileBannerUrl.value = bannerData.profileBannerUrl || 'https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg';
+      profileBannerUrl.value = bannerData.profileBannerUrl || placeholderBannerUrl;
     } else {
       console.error('Failed to fetch profile banner');
     }
   } catch (error) {
     console.error('Error fetching profile data:', error);
   } finally {
-    isLoading.value = false;
+    setTimeout(() => {
+      isLoading.value = false;
+    }, 1000);
   }
 });
 </script>
@@ -154,5 +161,10 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.mylistsContainer {
+  height: 245px;
+  max-height: 245px;
 }
 </style>

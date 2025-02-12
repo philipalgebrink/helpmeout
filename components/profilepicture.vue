@@ -4,7 +4,7 @@
 
 <script lang="ts" setup>
 const { showButton, nickname } = useShowButton();
-const profilePictureUrl = ref('https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg');
+const profilePictureUrl = ref('https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=');
 
 onMounted(async () => {
   try {
