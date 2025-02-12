@@ -1,9 +1,8 @@
 <template>
   <div class="dropdown" ref="dropdown">
-    <button class="edit" @click="toggleDropdown">Create List</button>
-    <div v-if="showDropdown" class="dropdown-content">
-      <a href="#" @click="showCreateListInput">Create List</a>
-      <div v-if="showInput">
+    <button class="createList" @click="showCreateListInput">Create List</button>
+    <div v-if="showInput" class="dropdown-content">
+      <div>
         <input type="text" v-model="listName" placeholder="Enter list name" />
         <input type="text" v-model="listImage" placeholder="Enter image URL" />
         <button @click="createList">Create</button>
@@ -68,7 +67,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.edit {
+.createList {
   background-color: black;
   border: solid 1px white;
   color: white;
@@ -80,37 +79,5 @@ onBeforeUnmount(() => {
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 12px;
-}
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: white;
-  width: 230px;
-  max-width: 230px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-  font-size: 24px;
-  border-radius: 12px;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content a:hover {
-  background-color: #ddd;
-}
-
-.dropdown-content {
-  display: block;
 }
 </style>
