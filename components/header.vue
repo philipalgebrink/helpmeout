@@ -29,7 +29,7 @@ const isLoggedIn = ref(true);
 /* Header styling */
 header {
   padding: 20px 10px;
-  background-color: rgb(255, 94, 0);
+  background: radial-gradient(circle, rgba(221,101,32,1) 0%, rgba(255,255,255,0) 100%);
   color: white;
   font-family: "Bangers", sans-serif;
   letter-spacing: 5px;
