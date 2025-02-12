@@ -1,5 +1,4 @@
 <template>
-  <p>My Reviews ➡️</p>
   <div class="myreviews">
     <div class="myreviewsContainer">
       <ul>

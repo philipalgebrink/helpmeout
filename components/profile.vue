@@ -1,6 +1,8 @@
 <template>
   <div class="profile">
-    <div class="profileHeader" :style="{ backgroundImage: `url(${profileBannerUrl})` }">
+    <div class="profileHeader">
+      <div class="backgroundImage" :style="{ backgroundImage: `url(${profileBannerUrl})` }"></div>
+      <div class="gradientOverlay"></div>
       <div class="profilePictureContainer">
         <profilepicture />
         <div v-if="showButton" class="profileButtons">
@@ -18,10 +20,16 @@
     </div>
     <spacer />
     <div class="contentContainer">
+      <div class="titleContainer">
+        <NuxtLink @click.prevent="GoToLists">{{ showButton ? 'My Lists' : `${nickname}'s Lists` }} ➡️</NuxtLink>
+        <createlistbutton v-if="showButton" />
+      </div>
       <mylists maxLists="4"/>
       <spacer />
+      <NuxtLink @click="">{{ showButton ? 'My Reviews' : `${nickname}'s Reviews` }} ➡️</NuxtLink>
       <myreviews />
       <spacer />
+      <NuxtLink @click="">{{ showButton ? 'My Friends' : `${nickname}'s Friends` }} ➡️</NuxtLink>
       <myfriends />
       <spacer />
     </div>
@@ -32,6 +40,14 @@
 const { showButton, nickname } = useShowButton();
 const profilePictureUrl = ref('https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg');
 const profileBannerUrl = ref('https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg');
+
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const GoToLists = () => {
+  router.push(`/u/${nickname.value}/lists`);
+};
 
 onMounted(async () => {
   try {
@@ -67,12 +83,31 @@ onMounted(async () => {
 .profileHeader {
   display: flex;
   gap: 20px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   height: 210px;
   align-items: center;
   position: relative;
+}
+
+.backgroundImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -2;
+}
+
+.gradientOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(0deg, rgb(0, 0, 0) 10%, rgba(255, 117, 37, 0.12) 100%);
+  z-index: -1;
 }
 
 .profile h1 {
@@ -100,7 +135,6 @@ onMounted(async () => {
   position: absolute;
   top: 0;
   right: 0;
-  filter: invert();
 }
 
 .navContainer {
@@ -108,5 +142,11 @@ onMounted(async () => {
 }
 
 .contentContainer {
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

@@ -1,6 +1,5 @@
 <template>
   <div class="myfriends">
-    <p>My Friends ➡️</p>
     <div class="myfriendsContainer">
       <ul>
         <li>

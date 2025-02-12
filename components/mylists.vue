@@ -1,9 +1,5 @@
 <template>
   <div class="mylists">
-    <div class="titleContainer">
-      <p>My Lists ➡️</p>
-      <createlistbutton v-if="showButton" />
-    </div>
     <div class="mylistsContainer">
       <ul>
         <li v-for="list in lists.slice(0, maxLists)" :key="list._id">
