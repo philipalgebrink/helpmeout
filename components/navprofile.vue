@@ -2,19 +2,22 @@
   <nav class="nav-profile">
     <ul>
       <li>
-        <NuxtLink :to="`/u/${nickname}/lists`" active-class="active">
-        <p>23</p>
-        lists</NuxtLink>
+        <NuxtLink :to="`/u/${nickname}/lists`">
+          <p>{{ lists.length }}</p>
+          lists
+        </NuxtLink>
       </li>
       <li>
-        <NuxtLink :to="`/u/${nickname}/reviews`" active-class="active">
-        <p>43</p>
-        reviews</NuxtLink>
+        <NuxtLink :to="`/u/${nickname}/reviews`">
+          <p>43</p>
+          reviews
+        </NuxtLink>
       </li>
       <li>
-        <NuxtLink :to="`/u/${nickname}/friends`" active-class="active">
-        <p>17</p>
-        friends</NuxtLink>
+        <NuxtLink :to="`/u/${nickname}/friends`">
+          <p>17</p>
+          friends
+        </NuxtLink>
       </li>
     </ul>
   </nav>
@@ -24,6 +27,21 @@
 
 const route = useRoute();
 const nickname = ref(route.params.nickname as string);
+const lists = ref([]);
+
+onMounted(async () => {
+  try {
+    const response = await fetch(`/api/get-lists?nickname=${nickname.value}`);
+    if (response.ok) {
+      const data = await response.json();
+      lists.value = data.lists;
+    } else {
+      console.error('Failed to fetch lists');
+    }
+  } catch (error) {
+    console.error('Error fetching lists:', error);
+  }
+});
 </script>
 
 <style scoped>
@@ -59,9 +77,5 @@ const nickname = ref(route.params.nickname as string);
   .nav-profile p {
     color: black;
   }
-}
-
-.nav-profile a.active {
-  color: #007bff;
 }
 </style>
