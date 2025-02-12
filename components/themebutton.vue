@@ -39,13 +39,12 @@ onMounted(() => {
 <style>
 
 button.light-mode, button.dark-mode {
-  background-color: white;
+  background-color: transparent;
   border: none;
   border-radius: 5px;
   padding: 10px 10px;
   font-size: 24px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   text-decoration: none;
   letter-spacing: 1px;
   filter: none;
@@ -57,7 +56,7 @@ button.dark-mode {
 }
 
 button.dark-mode:hover, button.light-mode:hover {
-  background-color: rgba(255, 255, 255, 0.8);
+  scale: 1.1;
 }
 
 </style>

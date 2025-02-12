@@ -61,15 +61,16 @@ onMounted(async () => {
 .nav-profile li {
   margin: 0;
   line-height: 10px;
+  text-align: center;
 }
 
 .nav-profile a {
   text-decoration: none;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .nav-profile p {
-  font-size: 24px;
+  font-size: 20px;
   color: white;
 }
 

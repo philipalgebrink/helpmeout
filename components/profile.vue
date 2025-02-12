@@ -1,17 +1,20 @@
 <template>
-  <div class="profile">
+  <div v-if="isLoading">
+    <loading />
+  </div>
+  <div v-else class="profile">
     <div class="profileHeader">
       <div class="backgroundImage" :style="{ backgroundImage: `url(${profileBannerUrl})` }"></div>
       <div class="gradientOverlay"></div>
       <div class="profilePictureContainer">
-        <profilepicture />
+        <profilepicture :src="profilePictureUrl" />
         <div v-if="showButton" class="profileButtons">
           <notificationbutton />
           <editprofilebutton />
         </div>
       </div>
       <div class="profileInfo">
-        <h1>@ {{ nickname }}</h1>
+        <h1>@{{ nickname }}</h1>
         <navprofile />
       </div>
       <div v-if="showButton" class="settingsButton">
@@ -24,7 +27,7 @@
         <NuxtLink @click.prevent="GoToLists">{{ showButton ? 'My Lists' : `${nickname}'s Lists` }} ➡️</NuxtLink>
         <createlistbutton v-if="showButton" />
       </div>
-      <mylists maxLists="4"/>
+      <mylists :maxLists="4" />
       <spacer />
       <NuxtLink @click="">{{ showButton ? 'My Reviews' : `${nickname}'s Reviews` }} ➡️</NuxtLink>
       <myreviews />
@@ -37,11 +40,11 @@
 </template>
 
 <script lang="ts" setup>
-const { showButton, nickname } = useShowButton();
-const profilePictureUrl = ref('https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg');
-const profileBannerUrl = ref('https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg');
 
-import { useRouter } from 'vue-router';
+const { showButton, nickname } = useShowButton();
+const profilePictureUrl = ref('');
+const profileBannerUrl = ref('');
+const isLoading = ref(true);
 
 const router = useRouter();
 
@@ -58,19 +61,21 @@ onMounted(async () => {
 
     if (pictureResponse.ok) {
       const pictureData = await pictureResponse.json();
-      profilePictureUrl.value = pictureData.profilePictureUrl || profilePictureUrl.value;
+      profilePictureUrl.value = pictureData.profilePictureUrl || 'https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg';
     } else {
       console.error('Failed to fetch profile picture');
     }
 
     if (bannerResponse.ok) {
       const bannerData = await bannerResponse.json();
-      profileBannerUrl.value = bannerData.profileBannerUrl || profileBannerUrl.value;
+      profileBannerUrl.value = bannerData.profileBannerUrl || 'https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg';
     } else {
       console.error('Failed to fetch profile banner');
     }
   } catch (error) {
     console.error('Error fetching profile data:', error);
+  } finally {
+    isLoading.value = false;
   }
 });
 </script>
@@ -112,6 +117,7 @@ onMounted(async () => {
 
 .profile h1 {
   font-size: 36px;
+  letter-spacing: 2px;
 }
 
 .profilePictureContainer {
