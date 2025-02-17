@@ -2,15 +2,15 @@
   <div class="login-container">
     <div class="login-card">
       <h2>Login</h2>
-      <div class="spacer"></div>
+      <spacer style="margin: 10px 0 20px 0" />
       <form @submit.prevent="handleLogin">
         <div class="input-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" v-model="email" required />
+          <label :class="{ active: email || emailFocused }" for="email">Email Address</label>
+          <input type="email" id="email" v-model="email" @focus="emailFocused = true" @blur="emailFocused = false" required />
         </div>
         <div class="input-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" v-model="password" required />
+          <label :class="{ active: password || passwordFocused }" for="password">Password</label>
+          <input type="password" id="password" v-model="password" @focus="passwordFocused = true" @blur="passwordFocused = false" required />
         </div>
         <button type="submit">Log In</button>
       </form>
@@ -22,8 +22,14 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useCookie } from 'nuxt/app';
+
 const email = ref('');
 const password = ref('');
+const emailFocused = ref(false);
+const passwordFocused = ref(false);
 const router = useRouter();
 const authCookie = useCookie('auth', { maxAge: 3600 * 1000 });
 
@@ -72,29 +78,42 @@ const handleLogin = async () => {
 }
 
 .input-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 15px;
-  text-align: left;
+  position: relative;
+  margin-bottom: 25px;
 }
 
 .input-group label {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #aaa;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+/* Move label up when input is focused or has text */
+.input-group input:focus + label,
+.input-group label.active {
+  top: -5px;
   font-size: 14px;
-  margin-bottom: 5px;
-  color: #555;
 }
 
 .input-group input {
+  width: 100%;
   padding: 12px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  transition: border 0.3s ease;
+  border: none;
+  border-bottom: 2px solid #555;
+  background: transparent;
+  color: white;
+  outline: none;
+  transition: border-color 0.3s ease;
 }
 
 .input-group input:focus {
-  border-color: #3498db;
-  outline: none;
+  border-bottom: 2px solid rgba(221, 101, 32, 1);
 }
 
 button {
@@ -117,7 +136,7 @@ button:hover {
   display: block;
   margin-top: 15px;
   font-size: 14px;
-  color: #555;
+  color: #aaa;
   text-decoration: none;
 }
 
