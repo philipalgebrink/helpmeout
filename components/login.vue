@@ -6,12 +6,15 @@
       <form @submit.prevent="handleLogin">
         <div class="input-group">
           <label :class="{ active: email || emailFocused }" for="email">Email Address</label>
-          <input type="email" id="email" v-model="email" @focus="emailFocused = true" @blur="emailFocused = false" required />
+          <input type="email" id="email" v-model="email" @focus="emailFocused = true" @blur="emailFocused = false"
+            required />
         </div>
         <div class="input-group">
           <label :class="{ active: password || passwordFocused }" for="password">Password</label>
-          <input type="password" id="password" v-model="password" @focus="passwordFocused = true" @blur="passwordFocused = false" required />
+          <input type="password" id="password" v-model="password" @focus="passwordFocused = true"
+            @blur="passwordFocused = false" required />
         </div>
+        <NuxtLink to="/reset-password" class="forgot-password">Forgot Password?</NuxtLink>
         <button type="submit">Log In</button>
       </form>
       <NuxtLink to="/register" class="register-link">
@@ -80,25 +83,25 @@ const handleLogin = async () => {
 
 .input-group {
   position: relative;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .input-group label {
   position: absolute;
   top: 50%;
-  left: 12px;
   transform: translateY(-50%);
   font-size: 16px;
-  color: #aaa;
+  color: #ececec;
   transition: all 0.3s ease;
   pointer-events: none;
 }
 
 /* Move label up when input is focused or has text */
-.input-group input:focus + label,
+.input-group input:focus+label,
 .input-group label.active {
   top: -5px;
   font-size: 14px;
+  color: #a0a0a0;
 }
 
 .input-group input {
@@ -115,6 +118,20 @@ const handleLogin = async () => {
 
 .input-group input:focus {
   border-bottom: 2px solid rgba(221, 101, 32, 1);
+}
+
+.forgot-password {
+  display: block;
+  text-align: left;
+  font-size: 14px;
+  margin: -10px 0 15px;
+  color: #a0a0a0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+  color: #ececec;
 }
 
 button {
