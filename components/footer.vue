@@ -18,6 +18,7 @@
 footer {
   width: 800px;
   margin: 25px auto;
+  height: 10vh;
 }
 
 .footer-container {

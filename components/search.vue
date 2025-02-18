@@ -11,33 +11,32 @@
       />
       <!-- Search Button -->
       <button class="searchButton" @click="fetchAllResults" aria-label="Search">🔎</button>
-    </div>
+      <!-- Filter Options -->
+      <div class="filter-container">
+        <label for="rating">IMDb Rating:</label>
+        <select id="rating" v-model="selectedRating">
+          <option value="">All</option>
+          <option value="1">1+</option>
+          <option value="2">2+</option>
+          <option value="3">3+</option>
+          <option value="4">4+</option>
+          <option value="5">5+</option>
+          <option value="6">6+</option>
+          <option value="7">7+</option>
+          <option value="8">8+</option>
+          <option value="9">9+</option>
+          <option value="10">10</option>
+        </select>
 
-    <!-- Filter Options -->
-    <div class="filter-container">
-      <label for="rating">IMDb Rating:</label>
-      <select id="rating" v-model="selectedRating">
-        <option value="">All</option>
-        <option value="1">1+</option>
-        <option value="2">2+</option>
-        <option value="3">3+</option>
-        <option value="4">4+</option>
-        <option value="5">5+</option>
-        <option value="6">6+</option>
-        <option value="7">7+</option>
-        <option value="8">8+</option>
-        <option value="9">9+</option>
-        <option value="10">10</option>
-      </select>
-
-      <label for="genre">Genre:</label>
-      <select id="genre" v-model="selectedGenre">
-        <option value="">All</option>
-        <option value="Action">Action</option>
-        <option value="Comedy">Comedy</option>
-        <option value="Drama">Drama</option>
-        <option value="Horror">Horror</option>
-      </select>
+        <label for="genre">Genre:</label>
+        <select id="genre" v-model="selectedGenre">
+          <option value="">All</option>
+          <option value="Action">Action</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Drama">Drama</option>
+          <option value="Horror">Horror</option>
+        </select>
+      </div>
     </div>
 
     <!-- Loading Indicator -->
@@ -89,7 +88,6 @@
 </template>
 
 <script lang="ts" setup>
-
 type Movie = {
   Title: string;
   Year: string;
@@ -157,7 +155,6 @@ const fetchAllResults = async () => {
   }
 };
 
-
 const applyFilters = () => {
   let filteredResults = searchResults.value;
 
@@ -183,7 +180,6 @@ const applyFilters = () => {
   );
 };
 
-
 // Watch for changes in filters and apply them
 watch([selectedRating, selectedGenre], applyFilters);
 
@@ -207,7 +203,6 @@ const searchClass = computed(() => {
 </script>
 
 <style scoped>
-
 .light-mode {
   h3, p {
     color: black;
@@ -223,8 +218,8 @@ const searchClass = computed(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 33vh;
   transition: padding-top 0.5s ease;
+  min-height: 90vh;
 }
 
 .search.results-displayed {
@@ -237,6 +232,7 @@ const searchClass = computed(() => {
   max-width: 620px;
   padding: 0 20px;
   box-sizing: border-box;
+  margin: auto;
 }
 
 .filter-container {
