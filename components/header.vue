@@ -28,11 +28,10 @@ const isLoggedIn = ref(true);
 <style scoped>
 /* Header styling */
 header {
-  padding: 20px 10px;
   background: radial-gradient(circle, rgba(221,101,32,1) 0%, rgba(255,255,255,0) 100%);
   color: white;
   font-family: "Bangers", sans-serif;
-  letter-spacing: 5px;
+  letter-spacing: 3px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for elevation */
 }
 
@@ -50,7 +49,7 @@ header {
 
 /* Centered title styling */
 h1 {
-  font-size: 48px; /* Slightly reduced font size for responsiveness */
+  font-size: 24px; /* Slightly reduced font size for responsiveness */
   margin: 0;
   text-align: center;
   flex: 2; /* Center title with more flexibility */
