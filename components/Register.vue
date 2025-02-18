@@ -2,7 +2,7 @@
   <div class="register-container">
     <div class="register-card">
       <h2>Register</h2>
-      <div class="spacer"></div>
+      <div class="spacer" style="margin: 10px 0 20px 0"></div>
       <form @submit.prevent="handleRegister">
         <div class="input-group">
           <label for="nickname">Nickname</label>
@@ -58,6 +58,7 @@ const handleRegister = async () => {
   align-items: center;
   margin: 25px auto 0 auto;
   width: 800px;
+  height: calc(100vh - 261px);
 }
 
 .register-card {

@@ -66,6 +66,7 @@ const handleLogin = async () => {
   align-items: center;
   margin: 25px auto 0 auto;
   width: 800px;
+  height: calc(100vh - 261px);
 }
 
 .login-card {
