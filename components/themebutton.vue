@@ -43,7 +43,7 @@ button.light-mode, button.dark-mode {
   border: none;
   border-radius: 5px;
   padding: 10px 10px;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   text-decoration: none;
   letter-spacing: 1px;

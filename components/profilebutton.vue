@@ -34,6 +34,19 @@ const buttonClass = computed(() => {
 // Ensure the button reflects the correct initial state
 onMounted(() => {
   updateNickname();
+  if (profileButton.value) {
+    if (colorMode.preference === 'dark') {
+      document.body.classList.remove('light-mode');
+      document.body.classList.add('dark-mode');
+      profileButton.value.classList.add('dark-mode');
+      profileButton.value.classList.remove('light-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+      document.body.classList.add('light-mode');
+      profileButton.value.classList.add('light-mode');
+      profileButton.value.classList.remove('dark-mode');
+    }
+  }
 });
 
 watch(() => localStorage.getItem('user'), updateNickname);
@@ -45,7 +58,7 @@ button.light-mode, button.dark-mode {
   border: none;
   border-radius: 5px;
   padding: 10px 10px;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   text-decoration: none;
   letter-spacing: 1px;
