@@ -203,15 +203,9 @@ const searchClass = computed(() => {
 </script>
 
 <style scoped>
-.light-mode {
-  h3, p {
-    color: black;
-  }
-}
-.dark-mode {
-  h3, p {
-    color: white;
-  }
+
+h3, p {
+  color: white;
 }
 
 .search {
@@ -219,7 +213,7 @@ const searchClass = computed(() => {
   flex-direction: column;
   align-items: center;
   transition: padding-top 0.5s ease;
-  min-height: 90vh;
+  min-height: 84vh;
 }
 
 .search.results-displayed {

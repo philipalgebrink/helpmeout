@@ -81,22 +81,12 @@
     font-size: 16px;
   }
 }
-.light-mode {
-  .aboutme, .favorite-movies, .favorite-directors {
-    background: linear-gradient(90deg, #aaa, white);
-  }
-}
 
-.dark-mode {
-  .aboutme, .favorite-movies, .favorite-directors {
-    background: linear-gradient(90deg, #333, #000);
-  }
-}
 .aboutme, .favorite-movies, .favorite-directors {
   width: 100%;
   height: 200px;
   margin-bottom: 20px;
-  background-color: #f0f0f0;
+  background: linear-gradient(90deg, #333, #000);
   border-radius: 5px;
   padding: 0 20px;
 }

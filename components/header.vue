@@ -12,7 +12,6 @@
       <!-- Authentication Button -->
       <div class="auth-button">
         <Profilebutton />
-        <Themebutton />
       </div>
     </div>
   </header>
@@ -60,7 +59,6 @@ h1 {
   display: flex;
   justify-content: flex-end;
   flex: 1; /* Align to the right */
-  gap: 5px;
 }
 
 /* Auth button styling */

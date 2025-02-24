@@ -167,13 +167,6 @@ watch(() => route.params.nickname, (newNickname, oldNickname) => {
   letter-spacing: 1px;
 }
 
-.light-mode h3, .light-mode p {
-  color: black;
-}
-.dark-mode h3, .dark-mode p {
-  color: white;
-}
-
 .movie-details p {
   font-size: 16px;
 }

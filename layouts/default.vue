@@ -18,13 +18,7 @@ onMounted(() => {
 </script>
 
 <style>
-/* Global styles */
-.light-mode body {
-  transition: background-color 1s ease;
-  background-color: white;
-  color: rgba(0,0,0,0.8);
-}
-.dark-mode body {
+body {
   transition: background-color 1s ease;
   background-color: black;
   color: #ebf4f1;

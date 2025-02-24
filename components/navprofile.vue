@@ -67,16 +67,10 @@ onMounted(async () => {
 .nav-profile a {
   text-decoration: none;
   font-size: 16px;
+  color: white;
 }
 
 .nav-profile p {
   font-size: 20px;
-  color: white;
-}
-
-.light-mode {
-  .nav-profile p {
-    color: black;
-  }
 }
 </style>
