@@ -21,7 +21,7 @@
         <settingsbutton />
       </div>
     </div>
-    <spacer />
+    <spacer style="--spacer-animation-duration: 1.5s;" />
     <div class="contentContainer">
       <div class="titleContainer">
         <NuxtLink @click.prevent="GoToLists">{{ showButton ? 'My Lists' : `${nickname}'s Lists` }} ➡️</NuxtLink>
@@ -30,13 +30,12 @@
       <div class="mylistsContainer">
         <mylists :maxLists="4" />
       </div>
-      <spacer />
+      <spacer style="--spacer-animation-duration: 2s;" />
       <NuxtLink @click="">{{ showButton ? 'My Reviews' : `${nickname}'s Reviews` }} ➡️</NuxtLink>
       <myreviews />
-      <spacer />
+      <spacer style="--spacer-animation-duration: 2.5s;" />
       <NuxtLink @click="">{{ showButton ? 'My Friends' : `${nickname}'s Friends` }} ➡️</NuxtLink>
       <myfriends />
-      <spacer />
     </div>
   </div>
 </template>
@@ -141,7 +140,6 @@ onMounted(async () => {
 .profileInfo {
   display: flex;
   flex-direction: column;
-  margin: 20px 0 0 0;
 }
 
 .settingsButton {

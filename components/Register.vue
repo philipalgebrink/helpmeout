@@ -2,7 +2,7 @@
   <div class="register-container">
     <div class="register-card">
       <h2>Register</h2>
-      <div class="spacer" style="margin: 10px 0 20px 0"></div>
+      <spacer style="margin: 10px 0 20px 0; --spacer-animation-duration: 2s;" />
       <form @submit.prevent="handleRegister">
         <div class="input-group">
           <label for="nickname">Nickname</label>

@@ -2,7 +2,7 @@
   <div class="login-container">
     <div class="login-card">
       <h2>Login</h2>
-      <spacer style="margin: 10px 0 20px 0" />
+      <spacer style="margin: 10px 0 20px 0; --spacer-animation-duration: 2s;" />
       <form @submit.prevent="handleLogin">
         <div class="input-group">
           <label :class="{ active: email || emailFocused }" for="email">Email Address</label>
@@ -67,7 +67,7 @@ const handleLogin = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 25px auto 0 auto;
+  margin: 0 auto;
   width: 800px;
   height: calc(100vh - 200px);
 }
