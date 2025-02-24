@@ -17,7 +17,7 @@
 <style scoped>
 footer {
   width: 800px;
-  margin: 25px auto;
+  margin: 50px auto 0;
   height: 10vh;
 }
 
