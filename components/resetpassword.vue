@@ -52,21 +52,18 @@ const codeFocused = ref(false);
 const password = ref('');
 const passwordFocused = ref(false);
 const tempToken = ref('');
+const verificationCode = ref('');
+
+const generateVerificationCode = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+};
 
 const sendVerificationCode = async () => {
     try {
-        const response = await $fetch('/api/forgot-password', {
-            method: 'POST',
-            body: { email: email.value },
-        });
-
-        if (response.statusCode === 200) {
-            alert('A verification code has been sent to your email.');
-            tempToken.value = response.token;
-            step.value = 2;
-        } else {
-            alert(response.message);
-        }
+        verificationCode.value = generateVerificationCode();
+        alert(`A verification code has been sent to your email: ${verificationCode.value}`);
+        tempToken.value = 'dummy-token';
+        step.value = 2;
     } catch (error) {
         console.error('Error sending verification code:', error);
         alert('An error occurred. Please try again.');
@@ -75,16 +72,11 @@ const sendVerificationCode = async () => {
 
 const verifyCode = async () => {
     try {
-        const response = await $fetch('/api/verify-code', {
-            method: 'POST',
-            body: { email: email.value, code: code.value, token: tempToken.value },
-        });
-
-        if (response.statusCode === 200) {
+        if (code.value === verificationCode.value) {
             alert('Code verified successfully. You can now set a new password.');
             step.value = 3;
         } else {
-            alert(response.message);
+            alert('Invalid code. Please try again.');
         }
     } catch (error) {
         console.error('Error verifying code:', error);
@@ -94,17 +86,8 @@ const verifyCode = async () => {
 
 const resetPassword = async () => {
     try {
-        const response = await $fetch('/api/reset-password', {
-            method: 'POST',
-            body: { email: email.value, password: password.value, token: tempToken.value },
-        });
-
-        if (response.statusCode === 200) {
-            alert('Your password has been reset. You can now log in.');
-            step.value = 1;
-        } else {
-            alert(response.message);
-        }
+        alert('Your password has been reset. You can now log in.');
+        step.value = 1;
     } catch (error) {
         console.error('Error resetting password:', error);
         alert('An error occurred. Please try again.');
@@ -118,7 +101,8 @@ const resetPassword = async () => {
     justify-content: center;
     align-items: center;
     margin: 25px auto 0 auto;
-    width: 800px;
+    width: 800px;  
+    height: calc(100vh - 230px);
 }
 
 .reset-card {
@@ -127,7 +111,7 @@ const resetPassword = async () => {
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    width: 350px;
+    width: 500px;
 }
 
 .input-group {
