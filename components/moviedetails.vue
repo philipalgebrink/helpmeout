@@ -19,7 +19,7 @@
     </NuxtLink>
   </div>
   <div v-else class="loading">
-    <p>Loading movie details...</p>
+    <loading />
   </div>
 </template>
 
