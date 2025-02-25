@@ -10,9 +10,19 @@
     <p><strong>Director:</strong> {{ movie?.Director }}</p>
     <p><strong>Plot:</strong> {{ movie?.Plot }}</p>
 
+    <!-- Dropdown to select a list -->
+    <div v-if="!loading && lists.length" class="dropdown-container">
+      <label for="list-select">Choose a list:</label>
+      <select id="list-select" v-model="selectedList" class="dropdown">
+        <option v-for="list in lists" :key="list._id" :value="list._id">
+          {{ list.listName }}
+        </option>
+      </select>
+    </div>
+
     <!-- Button dynamically changes based on whether the movie is saved -->
-    <button @click="saveMovie" :disabled="isSaving || isMovieSaved">
-      {{ isMovieSaved ? "Saved" : isSaving ? "Saving..." : "Save Movie" }}
+    <button @click="saveMovie" :disabled="isSaving || !selectedList">
+      {{ isSaving ? "Saving..." : "Save Movie" }}
     </button>
     <NuxtLink to="/">
       <p>Go Back</p>
@@ -24,11 +34,13 @@
 </template>
 
 <script lang="ts" setup>
-import { myMovies, addMovieToMyList } from "~/store/mylist";
-const authCookie = useCookie('auth');
+
+const { user } = useUser();
+const lists = ref([]);
+const loading = ref(true);
+const authCookie = useCookie("auth");
 const router = useRouter();
 
-// Movie details logic
 const route = useRoute();
 const imdbID = route.params.imdbID as string;
 
@@ -42,10 +54,8 @@ const movie = ref<null | {
   Poster: string;
 }>(null);
 
-const isSaving = ref(false); // Tracks if a movie is being saved
-const isMovieSaved = computed(() =>
-  myMovies.movies.some((m) => m.imdbID === imdbID)
-); // Checks if the movie is already saved
+const isSaving = ref(false);
+const selectedList = ref<string | null>(null);
 
 const fetchMovieDetails = async () => {
   try {
@@ -63,42 +73,80 @@ const fetchMovieDetails = async () => {
   }
 };
 
-const saveMovie = async () => {
-  if (isMovieSaved.value) {
-    return; // Prevent saving if already saved
+const fetchLists = async () => {
+  if (!user.value?.nickname) {
+    console.warn("Nickname is undefined, not fetching lists yet.");
+    return;
   }
 
-  // Check if the user is logged in
+  try {
+    const response = await fetch(`/api/get-lists?nickname=${user.value.nickname}`);
+    if (response.ok) {
+      const data = await response.json();
+      lists.value = data.lists;
+      console.log("Fetched lists:", lists.value);
+    } else {
+      console.error("Failed to fetch lists");
+    }
+  } catch (error) {
+    console.error("Error fetching lists:", error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Save movie logic
+const saveMovie = async () => {
+  if (!selectedList.value) return;
+
   const token = authCookie.value;
   if (!token) {
     alert("You need to be logged in to save movies.");
-    router.push('/login');
+    router.push("/login");
     return;
   }
 
   isSaving.value = true;
 
   try {
-    const savedMovie = {
-      imdbID: movie.value?.imdbID || "",
-      Title: movie.value?.Title || "",
-      Year: movie.value?.Year || "",
-      Genre: movie.value?.Genre || "",
-      Director: movie.value?.Director || "",
-      Plot: movie.value?.Plot || "",
-      Poster: movie.value?.Poster || "",
-    };
+    const response = await fetch("/api/add-movie-to-list", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        imdbID: movie.value?.imdbID,
+        title: movie.value?.Title,
+        year: movie.value?.Year,
+        genre: movie.value?.Genre,
+        director: movie.value?.Director,
+        plot: movie.value?.Plot,
+        poster: movie.value?.Poster,
+        listId: selectedList.value,
+        nickname: user.value?.nickname,
+      }),
+    });
 
-    // Add the movie to the local list
-    addMovieToMyList(savedMovie);
+    if (response.ok) {
+      alert("Movie saved successfully!");
+    } else {
+      console.error("Failed to save movie");
+    }
   } catch (error) {
     console.error("Error saving movie:", error);
-    // Optional: Display an error message to the user
     alert("Failed to save the movie. Please try again.");
   } finally {
-    isSaving.value = false; // Reset saving state
+    isSaving.value = false;
   }
 };
+
+// Fetch lists only when nickname is available
+watchEffect(() => {
+  if (user.value?.nickname) {
+    fetchLists();
+  }
+});
 
 onMounted(() => {
   fetchMovieDetails();
@@ -124,7 +172,6 @@ h1 {
   font-size: 36px;
   margin-bottom: 10px;
 }
-
 
 p {
   font-size: 24px;
@@ -164,5 +211,30 @@ button:disabled {
 
 button:hover:not(:disabled) {
   background-color: #34495e;
+}
+
+/* Dropdown styles */
+.dropdown-container {
+  margin: 20px 0;
+}
+
+.dropdown {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #727272;
+  color: black;
+}
+
+.dropdown:focus {
+  border-color: #3498db;
+}
+
+.dropdown option {
+  padding: 10px;
+color: black;
+  background-color: white;
 }
 </style>
