@@ -1,20 +1,13 @@
 <template>
-  <div :class="searchClass">
+  <div class="search">
     <div class="search-container">
-      <!-- Input Field -->
-      <input
-        type="text"
-        v-model="query"
-        placeholder="Search for a movie..."
-        @keyup.enter="fetchAllResults"
-        aria-label="Search for a movie"
-      />
-      <!-- Search Button -->
-      <button class="searchButton" @click="fetchAllResults" aria-label="Search">🔎</button>
-      <!-- Filter Options -->
+      <div class="search-input-wrapper">
+        <input type="text" v-model="query" placeholder="Search for a movie..." @keyup.enter="fetchAllResults"
+          aria-label="Search for a movie" class="search-input" />
+      </div>
       <div class="filter-container">
-        <label for="rating">IMDb Rating:</label>
-        <select id="rating" v-model="selectedRating">
+        <label for="rating" class="filter-label">IMDb Rating:</label>
+        <select id="rating" v-model="selectedRating" class="filter-select">
           <option value="">All</option>
           <option value="1">1+</option>
           <option value="2">2+</option>
@@ -28,8 +21,8 @@
           <option value="10">10</option>
         </select>
 
-        <label for="genre">Genre:</label>
-        <select id="genre" v-model="selectedGenre">
+        <label for="genre" class="filter-label">Genre:</label>
+        <select id="genre" v-model="selectedGenre" class="filter-select">
           <option value="">All</option>
           <option value="Action">Action</option>
           <option value="Comedy">Comedy</option>
@@ -39,49 +32,34 @@
       </div>
     </div>
 
-    <!-- Loading Indicator -->
     <p v-if="isLoading" class="loading">Loading...</p>
 
-    <!-- Search Results -->
     <div v-if="displayedResults.length" class="search-results">
-      <div
-        v-for="movie in displayedResults"
-        :key="movie.imdbID"
-        class="movie-item"
-      >
-        <NuxtLink :to="`/movie/${movie.imdbID}`">
-          <img
-            :src="movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150x225?text=No+Poster'"
-            alt="Poster"
-          />
-          <div class="movie-details">
-            <h3>{{ movie.Title }}</h3>
-            <p>Year: {{ movie.Year }}</p>
-            <p>IMDb Rating: {{ movie.imdbRating }}</p>
-            <p>Genre: {{ movie.Genre }}</p>
-          </div>
-        </NuxtLink>
+      <div class="movie-grid">
+        <div v-for="movie in displayedResults" :key="movie.imdbID" class="movie-item">
+          <NuxtLink :to="`/movie/${movie.imdbID}`">
+            <img :src="movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/200x300?text=No+Poster'"
+              alt="Poster" class="movie-poster" />
+            <div class="movie-details">
+              <h3>{{ movie.Title }}</h3>
+              <p>Year: {{ movie.Year }}</p>
+            </div>
+          </NuxtLink>
+        </div>
+      </div>
+      <div v-if="totalPages > 1" class="pagination">
+        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1" class="pagination-btn">
+          Previous
+        </button>
+        <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
+        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages" class="pagination-btn">
+          Next
+        </button>
       </div>
     </div>
 
-    <!-- Pagination -->
-    <div v-if="totalPages > 1" class="pagination">
-      <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">
-        Previous
-      </button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button
-        @click="changePage(currentPage + 1)"
-        :disabled="currentPage === totalPages"
-      >
-        Next
-      </button>
-    </div>
-
-    <!-- No Results Found -->
-    <p
-      v-else-if="!isLoading && !errorMessage && query.trim().length > 0 && searchResults.length === 0"
-    >
+    <p v-else-if="!isLoading && !errorMessage && query.trim().length > 0 && searchResults.length === 0"
+      class="no-results">
       No movies found. Try another search.
     </p>
   </div>
@@ -98,21 +76,18 @@ type Movie = {
   imdbRating?: string;
 };
 
-// Reactive states
-const query = ref(""); // Holds the search query
-const debouncedQuery = useDebounce(query, 300); // Debounced search query
-const searchResults = ref<Movie[]>([]); // Holds the full search results
-const displayedResults = ref<Movie[]>([]); // Holds the displayed search results for the current page
-const errorMessage = ref(""); // Holds any error message
-const isLoading = ref(false); // Indicates if the search is in progress
-const currentPage = ref(1); // Current page
-const resultsPerPage = 20; // Results per page
-const totalPages = ref(1); // Total number of pages
+const query = ref("");
+const debouncedQuery = useDebounce(query, 300);
+const searchResults = ref<Movie[]>([]);
+const displayedResults = ref<Movie[]>([]);
+const errorMessage = ref("");
+const isLoading = ref(false);
+const currentPage = ref(1);
+const resultsPerPage = 9;
+const totalPages = ref(1);
 
-// Filter states
-const selectedRating = ref(""); // Holds the selected rating filter
-const selectedGenre = ref(""); // Holds the selected genre filter
-
+const selectedRating = ref("");
+const selectedGenre = ref("");
 const fetchAllResults = async () => {
   isLoading.value = true;
   errorMessage.value = "";
@@ -124,26 +99,25 @@ const fetchAllResults = async () => {
       const detailedMovies = await Promise.all(
         data.Search.map(async (movie: any) => {
           try {
-            // Fetch detailed info for each movie
             const movieDetailsResponse = await fetch(`https://www.omdbapi.com/?i=${movie.imdbID}&apikey=9e1754f6`);
             const movieDetails = await movieDetailsResponse.json();
 
             if (movieDetails.Response === "True") {
-              return { ...movie, imdbRating: movieDetails.imdbRating, Genre: movieDetails.Genre,}; // Add IMDb rating to the movie object
+              return { ...movie, imdbRating: movieDetails.imdbRating, Genre: movieDetails.Genre };
             } else {
               console.warn(`Failed to fetch details for ${movie.Title}:`, movieDetails.Error);
-              return { ...movie, imdbRating: "N/A", Genre: "N/A" }; // Fallback if details fail
+              return { ...movie, imdbRating: "N/A", Genre: "N/A" };
             }
           } catch (error) {
             console.error(`Error fetching details for ${movie.Title}:`, error);
-            return { ...movie, imdbRating: "N/A", Genre: "N/A" }; // Fallback on error
+            return { ...movie, imdbRating: "N/A", Genre: "N/A" };
           }
         })
       );
 
-      searchResults.value = detailedMovies; // Update search results with detailed movies
+      searchResults.value = detailedMovies;
       totalPages.value = Math.ceil(data.totalResults / resultsPerPage);
-      applyFilters(); // Apply filters to the detailed movies
+      applyFilters();
     } else {
       errorMessage.value = data.Error;
     }
@@ -155,10 +129,15 @@ const fetchAllResults = async () => {
   }
 };
 
+const handleSearch = () => {
+  fetchAllResults();
+  (document.activeElement as HTMLElement).blur();
+  (document.querySelector('.search-input') as HTMLElement)?.focus();
+};
+
 const applyFilters = () => {
   let filteredResults = searchResults.value;
 
-  // Apply IMDb Rating filter
   if (selectedRating.value) {
     const rating = parseInt(selectedRating.value, 10);
     filteredResults = filteredResults.filter(
@@ -166,67 +145,72 @@ const applyFilters = () => {
     );
   }
 
-  // Apply Genre filter
   if (selectedGenre.value) {
     filteredResults = filteredResults.filter((movie) =>
       movie.Genre.includes(selectedGenre.value)
     );
   }
 
-  // Paginate results
   displayedResults.value = filteredResults.slice(
     (currentPage.value - 1) * resultsPerPage,
     currentPage.value * resultsPerPage
   );
 };
 
-// Watch for changes in filters and apply them
 watch([selectedRating, selectedGenre], applyFilters);
 
-// Watch for changes in debounced query and fetch results
 watch(debouncedQuery, fetchAllResults);
 
-// Change page
 const changePage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
     applyFilters();
   }
 };
-
-const searchClass = computed(() => {
-  return {
-    search: true,
-    'results-displayed': displayedResults.value.length || isLoading.value,
-  };
-});
 </script>
 
 <style scoped>
-
-h3, p {
-  color: white;
-}
-
 .search {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: padding-top 0.5s ease;
   min-height: 84vh;
-}
-
-.search.results-displayed {
-  padding-top: 50px;
+  background-color: #000000;
+  color: #ffffff;
+  width: 800px;
+  margin: 0 auto;
 }
 
 .search-container {
-  position: relative;
   width: 100%;
   max-width: 620px;
   padding: 0 20px;
   box-sizing: border-box;
-  margin: auto;
+  margin: 50px auto 0;
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.search-input {
+  padding: 15px 20px;
+  flex: 1;
+  border: 2px solid rgba(221, 101, 32, 0.5);
+  border-radius: 20px;
+  font-size: 18px;
+  color: #ffffff;
+  background-color: #333333;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.search-input::placeholder {
+  color: #d3d3d3;
 }
 
 .filter-container {
@@ -236,107 +220,159 @@ h3, p {
   margin-top: 20px;
 }
 
-input[type="text"] {
-  padding: 20px;
-  width: 100%;
-  margin-bottom: 10px;
-  border: 1px solid #000;
-  border-radius: 20px;
+.filter-label {
+  color: rgba(221, 101, 32, 0.5);
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.filter-select {
+  padding: 10px;
+  border: 2px solid rgba(221, 101, 32, 0.5);
+  border-radius: 10px;
+  background-color: #333333;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.filter-select option {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+.loading,
+.no-results {
   text-align: center;
-  font-size: 24px;
-  box-sizing: border-box;
-  letter-spacing: 2px;
-}
-
-.searchButton {
-  position: absolute;
-  font-size: 32px;
-  cursor: pointer;
-  right: 21px;
-  background: none;
-  border: none;
-  margin-top: 14px;
-}
-
-.searchButton:hover {
-  font-size: 34px;
-}
-
-.error {
-  color: red;
-  margin-top: 10px;
-}
-
-.loading {
-  margin-top: 10px;
+  margin-top: 20px;
+  color: #d3d3d3;
 }
 
 .search-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 70px 20px 20px;
+}
+
+.movie-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(350px, 1fr));
-  flex-wrap: wrap;
-  justify-content: center;
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  margin-top: 50px;
+  justify-items: center;
+  width: 100%;
+  max-width: 1200px;
 }
 
 .movie-item {
-  width: 300px;
-  text-align: left;
-  margin-bottom: 10px;
+  width: 100%;
+  height: 450px;
+  text-align: center;
+  transition: transform 0.3s ease;
+  max-width: 450px;
 }
 
 .movie-item:hover {
-  scale: 1.10;
+  transform: scale(1.05);
 }
 
 .movie-item a {
   text-decoration: none;
-  color: #000;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+}
+
+.movie-poster {
+  width: 100%;
+  height: 85%;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
 }
 
 .movie-details {
-  margin: 0 auto;
+  padding: 10px 0;
+  text-align: center;
+  background-color: #111;
+  width: 100%;
+  height: 15%;
+  border-radius: 0 0 5px 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .movie-details h3 {
-  font-size: 20px;
-  letter-spacing: 1px;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 5px 0;
+  color: rgba(221, 101, 32, 0.5);
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .movie-details p {
-  font-size: 16px;
-}
-.movie-details {
-  text-align: left;
+  font-size: 14px;
+  margin: 0;
+  color: #d3d3d3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  margin: 20px 0;
 }
 
-.pagination button {
+.pagination-btn {
   padding: 10px 20px;
   border: none;
   border-radius: 20px;
-  background-color: #007BFF;
-  color: white;
+  background-color: rgba(221, 101, 32, 0.5);
+  color: #ffffff;
   font-size: 16px;
   cursor: pointer;
-  margin: 0 5px;
+  margin: 0 10px;
 }
 
-.pagination button:disabled {
-  background-color: #95a5a6;
+.pagination-btn:disabled {
+  background-color: #666666;
   cursor: not-allowed;
 }
 
-.pagination span {
-  font-size: 16px;
+.pagination-info {
+  color: #d3d3d3;
   margin: 0 10px;
-  color: #333;
+}
+
+@media (max-width: 1024px) {
+  .movie-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .movie-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .movie-item {
+    max-width: 100%;
+  }
+
+  .search-input-wrapper {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search-input {
+    width: 100%;
+  }
 }
 </style>
