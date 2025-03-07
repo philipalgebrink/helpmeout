@@ -1,10 +1,8 @@
 <template>
   <div v-if="movie" class="movie-details">
     <h1>{{ movie?.Title }}</h1>
-    <img
-      :src="movie?.Poster !== 'N/A' ? movie?.Poster : 'https://via.placeholder.com/300x450?text=No+Poster'"
-      alt="Poster"
-    />
+    <img :src="movie?.Poster !== 'N/A' ? movie?.Poster : 'https://via.placeholder.com/300x450?text=No+Poster'"
+      alt="Poster" />
     <p><strong>Year:</strong> {{ movie?.Year }}</p>
     <p><strong>Genre:</strong> {{ movie?.Genre }}</p>
     <p><strong>Director:</strong> {{ movie?.Director }}</p>
@@ -153,7 +151,7 @@ onMounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
 .movie-details {
   margin: auto;
   max-width: 600px;
@@ -234,7 +232,7 @@ button:hover:not(:disabled) {
 
 .dropdown option {
   padding: 10px;
-color: black;
+  color: black;
   background-color: white;
 }
 </style>
