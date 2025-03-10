@@ -8,6 +8,9 @@
       <div class="gradientOverlay"></div>
       <div class="profilePictureContainer">
         <profilepicture :src="profilePictureUrl || placeholderProfilePictureUrl" />
+        <div v-if="!showButton" class="profileButtons">
+          <button @click="addFriend">Add Friend</button>
+        </div>
         <div v-if="showButton" class="profileButtons">
           <notificationbutton />
           <editprofilebutton />
@@ -41,11 +44,13 @@
 </template>
 
 <script lang="ts" setup>
-
 const { showButton, nickname } = useShowButton();
 const profilePictureUrl = ref('');
 const profileBannerUrl = ref('');
 const isLoading = ref(true);
+const authCookie = useCookie('auth');
+const route = useRoute();
+const friendNickname = ref(route.params.nickname);
 
 const placeholderProfilePictureUrl = 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=';
 const placeholderBannerUrl = 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=';
@@ -54,6 +59,38 @@ const router = useRouter();
 
 const GoToLists = () => {
   router.push(`/u/${nickname.value}/lists`);
+};
+
+const addFriend = async () => {
+  const token = authCookie.value;
+  if (!token) {
+    alert('You need to be logged in to add friends.');
+    router.push('/login');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/friends/add-friend', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ friendNickname: friendNickname.value }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert('Friend added successfully!');
+    } else {
+      alert(result.error || 'Failed to add friend');
+      console.error('Failed to add friend:', result.error);
+    }
+  } catch (error) {
+    console.error('Error adding friend:', error);
+    alert('Failed to add friend. Please try again.');
+  }
 };
 
 onMounted(async () => {
