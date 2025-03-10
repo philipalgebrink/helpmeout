@@ -1,5 +1,5 @@
 export function useUser() {
-  const user = ref<{ nickname: string } | null>(null);
+  const user = ref<{ userId: string; nickname: string; email: string } | null>(null);
 
   // Fetch user from localStorage
   const fetchUser = () => {
