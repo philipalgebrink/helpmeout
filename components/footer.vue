@@ -17,7 +17,7 @@
 <style scoped>
 footer {
   width: 800px;
-  margin: 50px auto 0;
+  margin: 0 auto;
   height: 10vh;
 }
 
@@ -31,7 +31,7 @@ footer {
 .footer-spacer {
   width: 100%;
   height: 10px;
-  background: radial-gradient(circle, rgba(221,101,32,1) 0%, rgba(255,255,255,0) 100%);
+  background: radial-gradient(circle, rgba(221, 101, 32, 1) 0%, rgba(255, 255, 255, 0) 100%);
   margin: 10px 0;
 }
 
