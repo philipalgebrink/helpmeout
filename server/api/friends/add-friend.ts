@@ -1,35 +1,47 @@
 import jwt from 'jsonwebtoken';
+import { ObjectId } from 'mongodb';
 
 export default defineEventHandler(async (event) => {
   try {
-    // Extract the token from the request headers
     const authHeader = event.req.headers.authorization;
     if (!authHeader) {
-      return { statusCode: 401, error: "Authorization header is missing" };
+      return { success: false, error: "Authorization header is missing" };
     }
 
     const token = authHeader.split(' ')[1];
     if (!token) {
-      return { statusCode: 401, error: "Token is missing" };
+      return { success: false, error: "Token is missing" };
     }
 
-    // Verify the token and extract the user ID
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.userId;
+    const userId = new ObjectId(decoded.userId);
 
-    // Read the request body
     const body = await readBody(event);
     const { friendNickname } = body;
 
     if (!friendNickname) {
-      return { statusCode: 400, error: "Missing required fields" };
+      return { success: false, error: "Missing required fields" };
     }
 
-    // Construct the collection name
-    const friendsCollectionName = `friends_${userId}`;
-
-    // Insert the friend into the user's friends collection
     const db = event.context.db;
+    const usersCollection = db.collection('users');
+
+    // Get the authenticated user's nickname
+    const user = await usersCollection.findOne({ _id: userId });
+    if (!user) {
+      return { success: false, error: "Authenticated user not found" };
+    }
+    const userNickname = user.nickname;
+
+    // Get the friend's user ID
+    const friendUser = await usersCollection.findOne({ nickname: friendNickname });
+    if (!friendUser) {
+      return { success: false, error: "Friend not found" };
+    }
+    const friendUserId = friendUser._id.toString();
+
+    // Add the friend to the user's friends list
+    const friendsCollectionName = `friends_${userId}`;
     const friendData = { friendNickname };
     const friendResult = await db.collection(friendsCollectionName).updateOne(
       { friendNickname },
@@ -37,15 +49,23 @@ export default defineEventHandler(async (event) => {
       { upsert: true }
     );
 
-    if (friendResult.upsertedCount === 1 || friendResult.modifiedCount === 1) {
-      console.log(`Friend added to collection ${friendsCollectionName}`);
-      return { statusCode: 200, message: "Friend added successfully" };
+    // Add the user to the friend's friends list
+    const friendFriendsCollectionName = `friends_${friendUserId}`;
+    const userData = { friendNickname: userNickname };
+    const userResult = await db.collection(friendFriendsCollectionName).updateOne(
+      { friendNickname: userNickname },
+      { $set: userData },
+      { upsert: true }
+    );
+
+    if ((friendResult.upsertedCount === 1 || friendResult.modifiedCount === 1) &&
+        (userResult.upsertedCount === 1 || userResult.modifiedCount === 1)) {
+      return { success: true, message: "Friend added successfully" };
     } else {
-      console.error(`Failed to add friend to collection ${friendsCollectionName}`);
-      return { statusCode: 500, error: "Failed to add friend" };
+      return { success: false, error: "Failed to add friend" };
     }
   } catch (err) {
     console.error("Error adding friend:", err);
-    return { statusCode: 500, error: "Failed to add friend" };
+    return { success: false, error: "Failed to add friend" };
   }
 });

@@ -4,7 +4,8 @@
   </div>
   <div v-else class="profile">
     <div class="profileHeader">
-      <div class="backgroundImage" :style="{ backgroundImage: `url(${profileBannerUrl || placeholderBannerUrl})` }"></div>
+      <div class="backgroundImage" :style="{ backgroundImage: `url(${profileBannerUrl || placeholderBannerUrl})` }">
+      </div>
       <div class="gradientOverlay"></div>
       <div class="profilePictureContainer">
         <profilepicture :src="profilePictureUrl || placeholderProfilePictureUrl" />
@@ -151,6 +152,7 @@ const sendFriendRequest = async () => {
 
     if (response.ok) {
       alert('Friend request sent successfully!');
+      await fetchFriends(); // Refetch friends to update isFriend state
     } else if (result.error === 'jwt expired') {
       const refreshed = await refreshAuthToken();
       if (refreshed) {
@@ -177,6 +179,7 @@ const removeFriend = async () => {
   }
 
   try {
+    console.log('Removing friend:', friendNickname.value);
     const response = await fetch('/api/friends/remove-friend', {
       method: 'POST',
       headers: {
@@ -187,11 +190,12 @@ const removeFriend = async () => {
     });
 
     const result = await response.json();
+    console.log('Remove-friend API response:', result);
 
-    if (response.ok) {
+    if (result.success) {
       alert('Friend removed successfully!');
-      isFriend.value = false;
-      await fetchFriends(); // Refetch friends list to update the state
+      isFriend.value = false; // Optimistically update the state
+      await fetchFriends(); // Refetch friends to confirm the state
     } else if (result.error === 'jwt expired') {
       const refreshed = await refreshAuthToken();
       if (refreshed) {
@@ -307,8 +311,7 @@ onMounted(async () => {
   gap: 20px;
 }
 
-.contentContainer {
-}
+.contentContainer {}
 
 .titleContainer {
   display: flex;

@@ -1,44 +1,59 @@
 import jwt from 'jsonwebtoken';
+import { ObjectId } from 'mongodb';
 
 export default defineEventHandler(async (event) => {
   try {
-    // Extract the token from the request headers
     const authHeader = event.req.headers.authorization;
     if (!authHeader) {
-      return { statusCode: 401, error: "Authorization header is missing" };
+      return { success: false, error: "Authorization header is missing" };
     }
 
     const token = authHeader.split(' ')[1];
     if (!token) {
-      return { statusCode: 401, error: "Token is missing" };
+      return { success: false, error: "Token is missing" };
     }
 
-    // Verify the token and extract the user ID
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.userId;
-    
-    // Read the request body
+
     const body = await readBody(event);
     const { friendNickname, userNickname } = body;
 
     if (!friendNickname || !userNickname) {
-      return { statusCode: 400, error: "Missing required fields" };
+      return { success: false, error: "Missing required fields" };
     }
 
-    // Fetch the user ID based on the friendNickname
     const db = event.context.db;
     const usersCollection = db.collection('users');
-    const friendUser = await usersCollection.findOne({ nickname: friendNickname });
 
-    if (!friendUser) {
-      return { statusCode: 404, error: "User not found" };
+    // Validate the sender's nickname matches the authenticated user
+    const senderUser = await usersCollection.findOne({ _id: new ObjectId(userId), nickname: userNickname });
+    if (!senderUser) {
+      return { success: false, error: "Sender not found or nickname does not match ID" };
     }
 
-    const friendUserId = friendUser._id;
+    // Fetch the receiver's user ID based on the friendNickname
+    const friendUser = await usersCollection.findOne({ nickname: friendNickname });
+    if (!friendUser) {
+      return { success: false, error: "User not found" };
+    }
 
-    // Construct the collection names
+    const friendUserId = friendUser._id.toString();
+
+    // Check if the users are already friends
+    const senderFriendsCollection = `friends_${userId}`;
+    const existingFriend = await db.collection(senderFriendsCollection).findOne({ friendNickname });
+    if (existingFriend) {
+      return { success: false, error: "User is already a friend" };
+    }
+
+    // Check if a friend request already exists
     const friendRequestsCollectionName = `friendrequests_${friendUserId}`;
     const senderRequestsCollectionName = `friendrequests_${userId}`;
+    const existingRequest = await db.collection(friendRequestsCollectionName).findOne({ senderId: userId });
+    if (existingRequest) {
+      return { success: false, error: "Friend request already sent" };
+    }
 
     // Insert the friend request into both users' friend requests collections
     const friendRequestData = { senderId: userId, senderNickname: userNickname, receiverNickname: friendNickname };
@@ -47,13 +62,13 @@ export default defineEventHandler(async (event) => {
     const friendRequestResult = await db.collection(friendRequestsCollectionName).insertOne(friendRequestData);
     const senderRequestResult = await db.collection(senderRequestsCollectionName).insertOne(senderRequestData);
 
-    if (friendRequestResult.insertedCount === 1 && senderRequestResult.insertedCount === 1) {
-      return { statusCode: 200, message: "Friend request sent successfully" };
+    if (friendRequestResult.insertedId && senderRequestResult.insertedId) {
+      return { success: true, message: "Friend request sent successfully" };
     } else {
-      return { statusCode: 500, error: "Failed to send friend request" };
+      return { success: false, error: "Failed to send friend request" };
     }
   } catch (err) {
     console.error("Error sending friend request:", err);
-    return { statusCode: 500, error: "Failed to send friend request" };
+    return { success: false, error: "Failed to send friend request" };
   }
 });

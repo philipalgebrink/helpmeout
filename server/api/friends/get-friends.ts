@@ -1,45 +1,68 @@
 import jwt from 'jsonwebtoken';
+import { ObjectId } from 'mongodb';
 
 export default defineEventHandler(async (event) => {
   try {
-    // Extract the token from the request headers
     const authHeader = event.req.headers.authorization;
     if (!authHeader) {
-      return { statusCode: 401, error: 'Authorization header is missing' };
+      console.log("Authorization header is missing");
+      return { success: false, error: 'Authorization header is missing' };
     }
 
     const token = authHeader.split(' ')[1];
     if (!token) {
-      return { statusCode: 401, error: 'Token is missing' };
+      console.log("Token is missing");
+      return { success: false, error: 'Token is missing' };
     }
 
-    // Verify the token and extract the user ID
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.userId;
+    const authenticatedUserId = decoded.userId;
+    console.log('Authenticated user ID:', authenticatedUserId);
 
-    // Get the nickname from the query parameters
     const { nickname } = getQuery(event);
+    if (!nickname) {
+      console.log("Nickname query parameter is missing");
+      return { success: false, error: 'Nickname query parameter is required' };
+    }
+    console.log('Profile nickname:', nickname);
 
-    // Fetch the user ID based on the nickname
     const db = event.context.db;
     const usersCollection = db.collection('users');
-    const user = await usersCollection.findOne({ nickname });
-
-    if (!user) {
-      return { statusCode: 404, error: 'User not found' };
+    const profileUser = await usersCollection.findOne({ nickname });
+    if (!profileUser) {
+      console.log(`User with nickname ${nickname} not found`);
+      return { success: false, error: 'User not found' };
     }
 
-    const friendsCollectionName = `friends_${userId}`;
+    const profileUserId = profileUser._id.toString();
+    console.log('Profile user ID:', profileUserId);
 
-    // Fetch the friends list
+    const friendsCollectionName = `friends_${profileUserId}`;
     const friends = await db.collection(friendsCollectionName).find().toArray();
+    console.log('Profile user friends:', friends);
 
-    // Check if the profile owner is a friend
-    const isFriend = friends.some(friend => friend.friendNickname === nickname);
+    const friendsWithProfilePictures = await Promise.all(
+      friends.map(async (friend) => {
+        const friendUser = await usersCollection.findOne({ nickname: friend.friendNickname });
+        return {
+          friendNickname: friend.friendNickname,
+          profilePictureUrl: friendUser?.profilePictureUrl || null,
+        };
+      })
+    );
 
-    return { statusCode: 200, friends, isFriend };
+    const authenticatedUserFriendsCollectionName = `friends_${authenticatedUserId}`;
+    const authenticatedUserFriends = await db.collection(authenticatedUserFriendsCollectionName).find().toArray();
+    console.log('Authenticated user friends:', authenticatedUserFriends);
+
+    const isFriend = authenticatedUserFriends.some(friend => 
+      friend.friendNickname.toLowerCase() === nickname.toLowerCase()
+    );
+    console.log('isFriend:', isFriend);
+
+    return { success: true, friends: friendsWithProfilePictures, isFriend };
   } catch (err) {
     console.error('Error fetching friends:', err);
-    return { statusCode: 500, error: 'Failed to fetch friends' };
+    return { success: false, error: 'Failed to fetch friends' };
   }
 });
