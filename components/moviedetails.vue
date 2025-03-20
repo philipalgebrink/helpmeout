@@ -93,6 +93,41 @@ const fetchLists = async () => {
   }
 };
 
+const refreshCookie = useCookie('refresh');
+
+const refreshAuthToken = async () => {
+  try {
+    console.log('Attempting to refresh token...');
+    console.log('Refresh token:', refreshCookie.value);
+    const response = await fetch('/api/auth/refresh-token', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${refreshCookie.value}`,
+      },
+    });
+
+    const result = await response.json();
+    console.log('Refresh token API response:', result);
+
+    if (result.success || response.ok) {
+      const newToken = result.token;
+      if (!newToken) {
+        console.error('New token not found in response');
+        return false;
+      }
+      authCookie.value = newToken;
+      console.log('Token refreshed successfully, new token:', newToken);
+      return true;
+    } else {
+      console.error('Failed to refresh token:', result.error || 'Unknown error');
+      return false;
+    }
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    return false;
+  }
+};
+
 // Save movie logic
 const saveMovie = async () => {
   if (!selectedList.value) return;
@@ -107,6 +142,7 @@ const saveMovie = async () => {
   isSaving.value = true;
 
   try {
+    console.log('Saving movie:', movie.value?.imdbID, 'to list:', selectedList.value);
     const response = await fetch("/api/add-movie-to-list", {
       method: "POST",
       headers: {
@@ -126,10 +162,21 @@ const saveMovie = async () => {
       }),
     });
 
-    if (response.ok) {
+    const result = await response.json();
+    console.log('Add-movie-to-list API response:', result);
+
+    if (result.success) {
       alert("Movie saved successfully!");
+    } else if (result.error === 'jwt expired') {
+      const refreshed = await refreshAuthToken();
+      if (refreshed) {
+        await saveMovie();
+      } else {
+        router.push('/login');
+      }
     } else {
-      console.error("Failed to save movie");
+      console.error("Failed to save movie:", result.error);
+      alert(result.error || "Failed to save the movie. Please try again.");
     }
   } catch (error) {
     console.error("Error saving movie:", error);
