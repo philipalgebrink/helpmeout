@@ -1,38 +1,71 @@
 <template>
-  <div v-if="movie" class="movie-details">
-    <h1>{{ movie?.Title }}</h1>
-    <img :src="movie?.Poster !== 'N/A' ? movie?.Poster : 'https://via.placeholder.com/300x450?text=No+Poster'"
-      alt="Poster" />
-    <p><strong>Year:</strong> {{ movie?.Year }}</p>
-    <p><strong>Genre:</strong> {{ movie?.Genre }}</p>
-    <p><strong>Director:</strong> {{ movie?.Director }}</p>
-    <p><strong>Plot:</strong> {{ movie?.Plot }}</p>
-
-    <!-- Dropdown to select a list -->
-    <div v-if="!loading && lists.length" class="dropdown-container">
-      <label for="list-select">Choose a list:</label>
-      <select id="list-select" v-model="selectedList" class="dropdown">
-        <option v-for="list in lists" :key="list._id" :value="list._id">
-          {{ list.listName }}
-        </option>
-      </select>
+  <div class="movie-page">
+    <div v-if="loading" class="loading">
+      <loading />
     </div>
 
-    <!-- Button dynamically changes based on whether the movie is saved -->
-    <button @click="saveMovie" :disabled="isSaving || !selectedList">
-      {{ isSaving ? "Saving..." : "Save Movie" }}
-    </button>
-    <NuxtLink to="/">
-      <p>Go Back</p>
-    </NuxtLink>
-  </div>
-  <div v-else class="loading">
-    <loading />
+    <div v-else-if="movie" class="movie-content">
+      <header class="movie-header">
+        <h1>{{ movie.Title }}</h1>
+      </header>
+
+      <div class="movie-main">
+        <div class="movie-poster">
+          <img :src="movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/300x450?text=No+Poster'"
+            :alt="`${movie.Title} Poster`" />
+        </div>
+
+        <div class="movie-info">
+          <div class="info-card">
+            <h2>Details</h2>
+            <div class="info-item">
+              <span class="label">Year:</span>
+              <span class="value">{{ movie.Year }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Genre:</span>
+              <span class="value">{{ movie.Genre }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Director:</span>
+              <span class="value">{{ movie.Director }}</span>
+            </div>
+            <div class="info-item plot">
+              <span class="label">Plot:</span>
+              <span class="value">{{ movie.Plot }}</span>
+            </div>
+            <spacer />
+            <div class="movie-actions">
+              <div v-if="lists.length" class="dropdown-container">
+                <label for="list-select">Add to List:</label>
+                <select id="list-select" v-model="selectedList" class="dropdown">
+                  <option value="" disabled>Select a list</option>
+                  <option v-for="list in lists" :key="list._id" :value="list._id">
+                    {{ list.listName }}
+                  </option>
+                </select>
+              </div>
+              <p v-else class="no-lists">No lists available. Create a list to add this movie.</p>
+
+              <div class="action-buttons">
+                <button @click="saveMovie" :disabled="isSaving || !selectedList" class="save-btn">
+                  {{ isSaving ? "Saving..." : "Save Movie" }}
+                </button>
+                <NuxtLink to="/" class="back-btn">Go Back</NuxtLink>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="error">
+      <p>Failed to load movie details. Please try again later.</p>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-
 const { user } = useUser();
 const lists = ref([]);
 const loading = ref(true);
@@ -53,7 +86,7 @@ const movie = ref<null | {
 }>(null);
 
 const isSaving = ref(false);
-const selectedList = ref<string | null>(null);
+const selectedList = ref<string | null>("");
 
 const fetchMovieDetails = async () => {
   try {
@@ -65,9 +98,11 @@ const fetchMovieDetails = async () => {
       movie.value = data;
     } else {
       console.error("Error fetching movie:", data.Error);
+      movie.value = null;
     }
   } catch (error) {
     console.error("Error fetching movie:", error);
+    movie.value = null;
   }
 };
 
@@ -78,13 +113,17 @@ const fetchLists = async () => {
   }
 
   try {
-    const response = await fetch(`/api/get-lists?nickname=${user.value.nickname}`);
-    if (response.ok) {
-      const data = await response.json();
+    const response = await fetch(`/api/get-lists?nickname=${user.value.nickname}`, {
+      headers: {
+        Authorization: `Bearer ${authCookie.value}`,
+      },
+    });
+    const data = await response.json();
+    if (data.statusCode === 200) {
       lists.value = data.lists;
       console.log("Fetched lists:", lists.value);
     } else {
-      console.error("Failed to fetch lists");
+      console.error("Failed to fetch lists:", data.error);
     }
   } catch (error) {
     console.error("Error fetching lists:", error);
@@ -128,7 +167,6 @@ const refreshAuthToken = async () => {
   }
 };
 
-// Save movie logic
 const saveMovie = async () => {
   if (!selectedList.value) return;
 
@@ -186,7 +224,6 @@ const saveMovie = async () => {
   }
 };
 
-// Fetch lists only when nickname is available
 watchEffect(() => {
   if (user.value?.nickname) {
     fetchLists();
@@ -199,87 +236,199 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.movie-details {
-  margin: auto;
-  max-width: 600px;
-  text-align: center;
-  margin-top: 100px;
+.movie-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 84vh;
+  background-color: #000000;
+  color: #ffffff;
+  width: 100%;
+  padding: 40px 20px;
 }
 
-img {
-  max-width: 100%;
+.movie-content {
+  max-width: 1200px;
+  width: 100%;
+}
+
+.movie-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.movie-header h1 {
+  font-size: 36px;
+  font-weight: bold;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.movie-main {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.movie-poster {
+  flex: 0 0 300px;
+}
+
+.movie-poster img {
+  width: 100%;
   height: auto;
-  border-radius: 8px;
+  height: 470px;
+  max-height: 470px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.movie-poster img:hover {
+  transform: scale(1.02);
+}
+
+.movie-info {
+  flex: 1;
+  min-width: 300px;
+  height: 470px;
+  max-height: 470px;
+}
+
+.info-card {
+  background-color: #111;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.info-card h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: rgba(221, 101, 32, 0.5);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.info-item {
+  display: flex;
+  margin-bottom: 15px;
+  font-size: 16px;
+  align-items: flex-start;
+}
+
+.info-item .label {
+  font-weight: bold;
+  color: rgba(221, 101, 32, 0.5);
+  min-width: 100px;
+}
+
+.info-item .value {
+  color: #d3d3d3;
+  flex: 1;
+  line-height: 1.5;
+}
+
+.movie-actions {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(221, 101, 32, 0.2);
+}
+
+.dropdown-container {
   margin-bottom: 20px;
 }
 
-h1 {
-  font-size: 36px;
-  margin-bottom: 10px;
-}
-
-p {
-  font-size: 24px;
-  margin: 10px 0;
-}
-
-a {
-  color: #3498db;
-  text-decoration: none;
-  font-size: 24px;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-.loading {
-  text-align: center;
-  font-size: 18px;
-  margin-top: 50px;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #2c3e50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.dropdown-container label {
+  display: block;
   font-size: 16px;
-}
-
-button:disabled {
-  background-color: #83aa7a;
-  cursor: not-allowed;
-}
-
-button:hover:not(:disabled) {
-  background-color: #34495e;
-}
-
-/* Dropdown styles */
-.dropdown-container {
-  margin: 20px 0;
+  font-weight: bold;
+  color: rgba(221, 101, 32, 0.5);
+  margin-bottom: 10px;
 }
 
 .dropdown {
   width: 100%;
+  max-width: 300px;
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #727272;
-  color: black;
+  border: 2px solid rgba(221, 101, 32, 0.5);
+  border-radius: 10px;
+  background-color: #333333;
+  color: #ffffff;
+  transition: border-color 0.3s ease;
 }
 
 .dropdown:focus {
-  border-color: #3498db;
+  border-color: rgba(221, 101, 32, 1);
+  outline: none;
 }
 
 .dropdown option {
-  padding: 10px;
-  color: black;
-  background-color: white;
+  background-color: #333333;
+  color: #ffffff;
+}
+
+.no-lists {
+  font-size: 16px;
+  color: #d3d3d3;
+  margin-bottom: 20px;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.save-btn {
+  padding: 10px 20px;
+  background-color: rgba(221, 101, 32, 0.5);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-btn:hover:not(:disabled) {
+  background-color: rgba(221, 101, 32, 0.7);
+}
+
+.save-btn:disabled {
+  background-color: #666666;
+  cursor: not-allowed;
+}
+
+.back-btn {
+  padding: 10px 20px;
+  background-color: #333333;
+  color: #ffffff;
+  border: 2px solid rgba(221, 101, 32, 0.5);
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #444444;
+  border-color: rgba(221, 101, 32, 0.7);
+}
+
+.loading,
+.error {
+  text-align: center;
+  font-size: 18px;
+  color: #d3d3d3;
+  margin-top: 50px;
 }
 </style>
