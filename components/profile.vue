@@ -29,7 +29,7 @@
     <spacer style="--spacer-animation-duration: 1.5s;" />
     <div class="contentContainer">
       <div class="titleContainer">
-        <NuxtLink @click.prevent="GoToLists">{{ showButton ? 'My Lists' : `${nickname}'s Lists` }} ➡️</NuxtLink>
+        <h2>{{ showButton ? 'My Lists' : `${nickname}'s Lists` }}</h2>
         <createlistbutton v-if="showButton" />
       </div>
       <div class="mylistsContainer">
@@ -60,10 +60,6 @@ const placeholderProfilePictureUrl = 'https://media.istockphoto.com/id/114754480
 const placeholderBannerUrl = 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=';
 
 const router = useRouter();
-
-const GoToLists = () => {
-  router.push(`/u/${nickname.value}/lists`);
-};
 
 const refreshAuthToken = async () => {
   try {
@@ -322,5 +318,10 @@ onMounted(async () => {
 .mylistsContainer {
   height: 245px;
   max-height: 245px;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
 }
 </style>
